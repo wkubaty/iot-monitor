@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ThingspeakWidgetConfigure"
+    android:id="@+id/xd"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/thingspeak_widget_configure_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_channel"/>
+
+    <Spinner
+        android:id="@+id/select_channel_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_field" />
+
+    <Spinner
+        android:id="@+id/select_field_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/set_triggers"/>
+
+    <CheckBox
+        android:id="@+id/thingspeak_widget_configure_select_channel_min_trigger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/min_value" />
+
+    <EditText
+        android:id="@+id/thingspeak_widget_configure_select_channel_min_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberDecimal" />
+
+    <CheckBox
+        android:id="@+id/thingspeak_widget_configure_select_channel_max_trigger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/max_value" />
+
+    <EditText
+        android:id="@+id/thingspeak_widget_configure_select_channel_max_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberDecimal"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh_time"/>
+
+    <TextView
+        android:id="@+id/refresh_time_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1min"/>
+
+    <SeekBar
+        android:id="@+id/refresh_time_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progress="0"/>
+
+
+</LinearLayout>
