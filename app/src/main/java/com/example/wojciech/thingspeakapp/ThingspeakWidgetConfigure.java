@@ -4,24 +4,22 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.TextView;
 
+import com.example.wojciech.thingspeakapp.databinding.ThingspeakWidgetConfigureBinding;
 import com.example.wojciech.thingspeakapp.model.ChannelSettings;
 import com.example.wojciech.thingspeakapp.model.Credentials;
 import com.google.gson.Gson;
@@ -41,7 +39,7 @@ public class ThingspeakWidgetConfigure extends AppCompatActivity {
     private static Map<Integer, ChannelSettings> settings = new HashMap<>(); // appWidgetId->settings
     private ChannelSettings channelSettingsTmp = new ChannelSettings();
     private static ArrayList<Credentials> credentialsList;
-
+    private ThingspeakWidgetConfigureBinding bnd;
     public ThingspeakWidgetConfigure() {
         super();
     }
@@ -49,49 +47,50 @@ public class ThingspeakWidgetConfigure extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.thingspeak_widget_configure);
-        Toolbar toolbar = findViewById(R.id.thingspeak_widget_configure_toolbar);
-        CheckBox minTrigger = findViewById(R.id.thingspeak_widget_configure_select_channel_min_trigger);
-        CheckBox maxTrigger = findViewById(R.id.thingspeak_widget_configure_select_channel_max_trigger);
-        EditText minValue = findViewById(R.id.thingspeak_widget_configure_select_channel_min_value);
-        EditText maxValue = findViewById(R.id.thingspeak_widget_configure_select_channel_max_value);
-        Spinner channelSpinner = findViewById(R.id.select_channel_spinner);
-        Spinner fieldSpinner = findViewById(R.id.select_field_spinner);
-        SeekBar refreshTimeSeekbar = findViewById(R.id.refresh_time_seekbar);
+        bnd = DataBindingUtil.setContentView(this, R.layout.thingspeak_widget_configure);
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(bnd.wConfToolbar);
 
         setResult(RESULT_CANCELED);
-
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            appWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
         }
+        configure(appWidgetId);
+    }
+
+    private void configure(int appWidgetId) {
+        ChannelSettings channelSettings = loadChannelSettings(this, appWidgetId);
+        if(channelSettings == null){
+            channelSettings = new ChannelSettings();
+        }
+        settings.put(appWidgetId, channelSettings);
+        bnd.setChannelSettings(channelSettings);
         credentialsList = CredentialsManager.getInstance().getCredentials(this);
 
         final List<String> names = credentialsList.stream()
                 .map(Credentials::getName)
                 .collect(Collectors.toList());
         ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(ThingspeakWidgetConfigure.this, R.layout.channel_list_item, names);
-        channelSpinner.setAdapter(namesAdapter);
+        bnd.wConfSelectChannelSpinner.setAdapter(namesAdapter);
+        if(channelSettings.getCredentials() != null){
+            //todo id
+            bnd.wConfSelectChannelSpinner.setSelection(names.indexOf(channelSettings.getCredentials().getName()));
+        }
 
-        channelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+        bnd.wConfSelectChannelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 parent.getItemAtPosition(position);
-                ChannelSettings channelSettings = settings.get(appWidgetId);
-                if(channelSettings == null){
-                    Credentials credentials = credentialsList.get(position);
-                    channelSettingsTmp.setCredentials(credentials);
+                Credentials credentials = credentialsList.get(position);
+                channelSettingsTmp.setCredentials(credentials);
 
-                }
             }
 
             @Override
@@ -99,11 +98,10 @@ public class ThingspeakWidgetConfigure extends AppCompatActivity {
             }
         });
         ArrayAdapter<Integer> fieldsAdapter = new ArrayAdapter<>(ThingspeakWidgetConfigure.this, R.layout.channel_list_item, Arrays.asList(1,2,3,4,5,6,7,8));
+        bnd.wConfSelectFieldSpinner.setAdapter(fieldsAdapter);
 
-        fieldSpinner.setAdapter(fieldsAdapter);
-        fieldSpinner.setSelection(0);
 
-        fieldSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+        bnd.wConfSelectFieldSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -117,14 +115,14 @@ public class ThingspeakWidgetConfigure extends AppCompatActivity {
 
 
         CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
-            channelSettingsTmp.setMinTrigger(minTrigger.isChecked());
-            channelSettingsTmp.setMaxTrigger(maxTrigger.isChecked());
+            channelSettingsTmp.setMinTrigger(bnd.wConfMinTrigger.isChecked());
+            channelSettingsTmp.setMaxTrigger(bnd.wConfMaxTrigger.isChecked());
         };
 
-        minTrigger.setOnCheckedChangeListener(onCheckedChangeListener);
-        maxTrigger.setOnCheckedChangeListener(onCheckedChangeListener);
 
-        TextWatcher textWatcher = new TextWatcher() {
+        bnd.wConfMinTrigger.setOnCheckedChangeListener(onCheckedChangeListener);
+        bnd.wConfMaxTrigger.setOnCheckedChangeListener(onCheckedChangeListener);
+        TextWatcher textWatcherMin = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -137,34 +135,50 @@ public class ThingspeakWidgetConfigure extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                channelSettingsTmp.setMinValue(Float.valueOf(minValue.getText().toString()));
-                channelSettingsTmp.setMaxValue(Float.valueOf(maxValue.getText().toString()));
+                channelSettingsTmp.setMinValue(Float.valueOf(bnd.wConfMinValue.getText().toString()));
+            }
+        };
+        TextWatcher textWatcherMax = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                channelSettingsTmp.setMaxValue(Float.valueOf(bnd.wConfMaxValue.getText().toString()));
             }
         };
 
-        minValue.setText("0.0");
-        maxValue.setText("0.0");
-        minValue.addTextChangedListener(textWatcher);
-        maxValue.addTextChangedListener(textWatcher);
-        refreshTimeSeekbar.setMax(59);
+        bnd.wConfMinValue.addTextChangedListener(textWatcherMin);
+        bnd.wConfMaxValue.addTextChangedListener(textWatcherMax);
 
-        TextView refreshTimeValueTV = findViewById(R.id.refresh_time_value);
+        ViewTreeObserver viewTree = bnd.wConfRefreshTimeSeekbar.getViewTreeObserver();
+        viewTree.addOnPreDrawListener(() -> {
+            int finalWidth = bnd.wConfRefreshTimeSeekbar.getMeasuredWidth();
+            int val = (bnd.wConfRefreshTimeSeekbar.getProgress() * (finalWidth - 2 * bnd.wConfRefreshTimeSeekbar.getThumbOffset()-50)) / bnd.wConfRefreshTimeSeekbar.getMax();
+            int setx = (int) bnd.wConfRefreshTimeSeekbar.getX() + val + bnd.wConfRefreshTimeSeekbar.getThumbOffset()-20;
 
-        refreshTimeSeekbar.setProgress(0);
-        int val = (refreshTimeSeekbar.getProgress() * (refreshTimeSeekbar.getWidth() - 2 * refreshTimeSeekbar.getThumbOffset()-50)) / refreshTimeSeekbar.getMax();
-        int setx = (int) refreshTimeSeekbar.getX() + val + refreshTimeSeekbar.getThumbOffset()-20;
-        channelSettingsTmp.setRefreshTime(1);
-        channelSettingsTmp.setFieldNr(1);
-        refreshTimeValueTV.setX(setx);
-        refreshTimeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            bnd.wConfRefreshTimeValue.setX(setx);
+
+            return true;
+        });
+        bnd.wConfRefreshTimeValue.setText(String.format("%smin", String.valueOf(channelSettings.getRefreshTime())));
+
+        bnd.wConfRefreshTimeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 channelSettingsTmp.setRefreshTime(progress+1);
                 //TODO calibrate
-                int val = (progress * (seekBar.getWidth() - 2 * seekBar.getThumbOffset()-50)) / seekBar.getMax();
-                int setx = (int) seekBar.getX() + val + seekBar.getThumbOffset()-20;
-                refreshTimeValueTV.setX(setx);
-                refreshTimeValueTV.setText(String.format("%smin", String.valueOf(progress+1)));
+                int valx = (progress * (seekBar.getWidth() - 2 * seekBar.getThumbOffset()-50)) / seekBar.getMax();
+                int setxx = (int) seekBar.getX() + valx + seekBar.getThumbOffset()-20;
+                bnd.wConfRefreshTimeValue.setX(setxx);
+                bnd.wConfRefreshTimeValue.setText(String.format("%smin", channelSettingsTmp.getRefreshTime()));
             }
 
             @Override
@@ -200,6 +214,7 @@ public class ThingspeakWidgetConfigure extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.widget_config_menu_confirm:
+                settings.put(appWidgetId, channelSettingsTmp);
                 saveChannelSettings(ThingspeakWidgetConfigure.this, appWidgetId);
                 Context context = ThingspeakWidgetConfigure.this;
                 ThingspeakWidget.updateAppWidget(context, AppWidgetManager.getInstance(context), appWidgetId);
@@ -215,11 +230,10 @@ public class ThingspeakWidgetConfigure extends AppCompatActivity {
         }
     }
     void saveChannelSettings(Context context, int appWidgetId) {
-
         SharedPreferences prefs = context.getSharedPreferences("thingspeak_widget_prefs_" + appWidgetId, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(channelSettingsTmp);
+        String json = gson.toJson(settings.get(appWidgetId));
         editor.putString("channel_settings", json);
         editor.apply();
     }
@@ -239,6 +253,7 @@ public class ThingspeakWidgetConfigure extends AppCompatActivity {
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.apply();
     }
+
 
 
 }

@@ -10,9 +10,16 @@ public class ChannelSettings {
     private float maxValue;
 
     public ChannelSettings() {
+        this.fieldNr = 1;
+        this.refreshTime = 60;
+        this.minTrigger = false;
+        this.maxTrigger = false;
+        this.minValue = 0.0f;
+        this.maxValue = 0.0f;
     }
 
     public ChannelSettings(Credentials credentials, int fieldNr, int refreshTime) {
+        this();
         this.credentials = credentials;
         this.fieldNr = fieldNr;
         this.refreshTime = refreshTime;
@@ -82,5 +89,18 @@ public class ChannelSettings {
 
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
+    }
+
+    @Override
+    public String toString() {
+        return "ChannelSettings{" +
+                "credentials=" + credentials +
+                ", fieldNr=" + fieldNr +
+                ", refreshTime=" + refreshTime +
+                ", minTrigger=" + minTrigger +
+                ", maxTrigger=" + maxTrigger +
+                ", minValue=" + minValue +
+                ", maxValue=" + maxValue +
+                '}';
     }
 }

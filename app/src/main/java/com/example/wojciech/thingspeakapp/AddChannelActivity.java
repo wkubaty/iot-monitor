@@ -1,29 +1,37 @@
 package com.example.wojciech.thingspeakapp;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.wojciech.thingspeakapp.databinding.ActivityAddChannelBinding;
 import com.example.wojciech.thingspeakapp.model.Credentials;
 import com.example.wojciech.thingspeakapp.model.ThingspeakResponse;
 
 
 public class AddChannelActivity extends AppCompatActivity {
+    private int channeldId;
+    private String apiKey;
+    private ActivityAddChannelBinding bnd;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_channel);
+        bnd = DataBindingUtil.setContentView(this, R.layout.activity_add_channel);
+
     }
 
     public void searchChannel(View view) {
 
-        final int channeldId = Integer.valueOf(((EditText) findViewById(R.id.channelId)).getText().toString());
-        final String apiKey = ((EditText) findViewById(R.id.apiKey)).getText().toString();
+        channeldId = Integer.valueOf(bnd.channelId.getText().toString());
+        apiKey = bnd.apiKey.getText().toString();
+
         try {
 
             Credentials credentials = new Credentials(channeldId, "", apiKey);

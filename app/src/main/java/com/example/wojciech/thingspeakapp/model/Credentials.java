@@ -36,4 +36,13 @@ public class Credentials implements Serializable {
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
+
+    @Override
+    public String toString() {
+        return "Credentials{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", apiKey='" + apiKey + '\'' +
+                '}';
+    }
 }
