@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center|top"
-        tools:context=".AddChannelActivity">
+        tools:context="com.example.wojciech.iotmonitor.activities.AddChannelActivity">
 
         <EditText
             android:id="@+id/channelId"

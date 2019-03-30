@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.wojciech.thingspeakapp"
+    package="com.example.wojciech.iotmonitor"
     android:installLocation="preferExternal">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.wojciech.iotmonitor.activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,23 +23,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddChannelActivity" />
-        <activity android:name=".ChannelActivity" />
+        <activity android:name="com.example.wojciech.iotmonitor.activities.AddChannelActivity" />
+        <activity android:name="com.example.wojciech.iotmonitor.activities.ChannelActivity" />
 
-        <receiver android:name=".ThingspeakWidget">
+        <receiver android:name="com.example.wojciech.iotmonitor.widget.Widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/thingspeak_widget_info" />
+                android:resource="@xml/widget_info" />
         </receiver>
-        <receiver android:name=".Alarm" />
+        <receiver android:name=".widget.WidgetConfigureActivity" />
 
         <activity
-            android:name=".ThingspeakWidgetConfigure"
-            android:label="@string/title_activity_select_channel">
+            android:name="com.example.wojciech.iotmonitor.widget.WidgetConfigureActivity"
+            android:label="@string/title_activity_configure_widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>

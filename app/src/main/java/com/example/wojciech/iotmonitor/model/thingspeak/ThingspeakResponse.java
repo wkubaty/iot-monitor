@@ -1,4 +1,4 @@
-package com.example.wojciech.thingspeakapp.model;
+package com.example.wojciech.iotmonitor.model.thingspeak;
 
 import java.io.Serializable;
 import java.util.Arrays;

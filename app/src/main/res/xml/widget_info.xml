@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="com.example.wojciech.thingspeakapp.ThingspeakWidgetConfigure"
-    android:initialKeyguardLayout="@layout/thingspeak_widget"
-    android:initialLayout="@layout/thingspeak_widget"
+    android:configure="com.example.wojciech.iotmonitor.widget.WidgetConfigureActivity"
+    android:initialKeyguardLayout="@layout/widget"
+    android:initialLayout="@layout/widget"
     android:minWidth="110dp"
     android:minHeight="110dp"
     android:previewImage="@drawable/example_appwidget_preview"

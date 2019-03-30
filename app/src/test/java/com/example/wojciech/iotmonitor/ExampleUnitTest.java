@@ -1,4 +1,4 @@
-package com.example.wojciech.thingspeakapp;
+package com.example.wojciech.iotmonitor;
 
 import org.junit.Test;
 

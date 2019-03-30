@@ -1,4 +1,4 @@
-package com.example.wojciech.thingspeakapp.model;
+package com.example.wojciech.iotmonitor.model.thingspeak;
 
 public class ChannelSettings {
     private Credentials credentials;
@@ -90,6 +90,8 @@ public class ChannelSettings {
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
     }
+
+
 
     @Override
     public String toString() {

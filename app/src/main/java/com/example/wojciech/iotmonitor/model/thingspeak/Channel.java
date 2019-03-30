@@ -1,4 +1,4 @@
-package com.example.wojciech.thingspeakapp.model;
+package com.example.wojciech.iotmonitor.model.thingspeak;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -162,5 +162,8 @@ public class Channel implements Serializable {
             fields[7] = field8;
         }
         return fields;
+    }
+    public String getField(int nr){
+        return getFields()[nr-1];
     }
 }

@@ -1,4 +1,4 @@
-package com.example.wojciech.thingspeakapp;
+package com.example.wojciech.iotmonitor.activities;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -8,9 +8,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.wojciech.thingspeakapp.databinding.ActivityAddChannelBinding;
-import com.example.wojciech.thingspeakapp.model.Credentials;
-import com.example.wojciech.thingspeakapp.model.ThingspeakResponse;
+import com.example.wojciech.iotmonitor.CredentialsManager;
+import com.example.wojciech.iotmonitor.R;
+import com.example.wojciech.iotmonitor.databinding.ActivityAddChannelBinding;
+import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
+import com.example.wojciech.iotmonitor.model.thingspeak.ThingspeakResponse;
+import com.example.wojciech.iotmonitor.net.RequestManager;
+import com.example.wojciech.iotmonitor.net.VolleyCallback;
+
+import java.util.ArrayList;
 
 
 public class AddChannelActivity extends AppCompatActivity {
@@ -28,21 +34,17 @@ public class AddChannelActivity extends AppCompatActivity {
     }
 
     public void searchChannel(View view) {
-
         channeldId = Integer.valueOf(bnd.channelId.getText().toString());
         apiKey = bnd.apiKey.getText().toString();
 
         try {
-
-            Credentials credentials = new Credentials(channeldId, "", apiKey);
-            RequestManager.getInstance().requestFeed(credentials, getApplicationContext(), 0, new VolleyCallback(){
+            Credentials credentials = new Credentials(channeldId, apiKey);
+            RequestManager.getInstance().requestFeed(credentials, getApplicationContext(), 0, new VolleyCallback() {
                 @Override
                 public void onSuccess(ThingspeakResponse thingspeakResponse) {
-                    Intent intent = new Intent();
                     credentials.setName(thingspeakResponse.getChannel().getName());
-                    CredentialsManager.getInstance().addCredentials(AddChannelActivity.this, credentials);
-                    intent.putExtra("credentials", credentials);
-                    setResult(RESULT_OK, intent);
+                    CredentialsManager.getInstance().addCredentials(credentials);
+                    setResult(RESULT_OK);
                     finish();
                 }
 
@@ -61,4 +63,5 @@ public class AddChannelActivity extends AppCompatActivity {
             finish();
         }
     }
+
 }

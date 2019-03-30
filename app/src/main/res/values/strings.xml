@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ThingspeakApp</string>
+    <string name="app_name">IoTMonitor</string>
     <string name="action_settings">Settings</string>
     <string name="api_key">API Key</string>
     <string name="channel_id">Channel ID</string>
@@ -8,12 +8,22 @@
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
     <string name="title_activity_select_channel">SelectChannelActivity</string>
-    <string name="select_channel">Select channel</string>
+    <string name="channel">Channel</string>
     <string name="min_value">Minimal value alarm</string>
     <string name="max_value">Maximal value alarm</string>
     <string name="widget_cancel_menu_cancel_title">cancel</string>
     <string name="widget_config_menu_confirm_title">confirm</string>
     <string name="set_triggers">Set triggers</string>
     <string name="refresh_time">Refresh time</string>
-    <string name="select_field">Select field</string>
+    <string name="field">Field</string>
+    <string name="time_range_hour">hour</string>
+    <string name="time_range_day">day</string>
+    <string name="time_range_week">week</string>
+    <string name="time_range_month">month</string>
+    <string name="compare">compare</string>
+    <string name="last_request_time">last request time</string>
+    <string name="alarm_snooze">snooze 10 min</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="title_activity_configure_widget">Configure</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.wojciech.thingspeakapp.model;
+package com.example.wojciech.iotmonitor.model.thingspeak;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -27,37 +27,6 @@ public class Feed implements Serializable {
         return entryId;
     }
 
-    public String getField1() {
-        return field1;
-    }
-
-    public String getField2() {
-        return field2;
-    }
-
-    public String getField3() {
-        return field3;
-    }
-
-    public String getField4() {
-        return field4;
-    }
-
-    public String getField5() {
-        return field5;
-    }
-
-    public String getField6() {
-        return field6;
-    }
-
-    public String getField7() {
-        return field7;
-    }
-
-    public String getField8() {
-        return field8;
-    }
 
     public String[] getFields() {
         if(fields == null){
@@ -72,5 +41,9 @@ public class Feed implements Serializable {
             fields[7] = field8;
         }
         return fields;
+    }
+
+    public String getField(int nr) {
+        return getFields()[nr-1];
     }
 }
