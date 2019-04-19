@@ -19,22 +19,22 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.wojciech.iotmonitor.ChannelSettingsManager;
-import com.example.wojciech.iotmonitor.CredentialsManager;
+import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.WidgetConfigureBinding;
 import com.example.wojciech.iotmonitor.model.thingspeak.ChannelSettings;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
-import com.example.wojciech.iotmonitor.prefs.SharedPrefsManager;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class WidgetConfigureActivity extends AppCompatActivity {
 
     int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-
+    ChannelSettingsManager channelSettingsManager;
+    CredentialsRepository credentialsRepository;
     private ChannelSettings channelSettingsTmp = new ChannelSettings();
     private WidgetConfigureBinding bnd;
     public WidgetConfigureActivity() {
@@ -44,7 +44,8 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPrefsManager.initialize(this);
+        channelSettingsManager = ChannelSettingsManager.getInstance(this);
+        credentialsRepository = CredentialsRepository.getInstance(this);
 
         bnd = DataBindingUtil.setContentView(this, R.layout.widget_configure);
 
@@ -64,15 +65,15 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     }
 
     private void configure(int appWidgetId) {
-        ChannelSettingsManager.initialize(this);
-        CredentialsManager.initialize(this);
-        ChannelSettings channelSettings = ChannelSettingsManager.getInstance().getChannelSettings(appWidgetId);
+        ChannelSettingsManager.getInstance(this);
+        CredentialsRepository.getInstance(this);
+        ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
         if(channelSettings == null){
             //todo return?
             channelSettings = new ChannelSettings();
         }
         bnd.setChannelSettings(channelSettings);
-        HashSet<Credentials> credentialsList = CredentialsManager.getInstance().getCredentials();
+        Set<Credentials> credentialsList = credentialsRepository.getCredentials().getValue();
 
         final List<String> names = credentialsList.stream()
                 .map(Credentials::getName)
@@ -238,8 +239,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.widget_config_menu_confirm:
-                ChannelSettingsManager.initialize(this);
-                ChannelSettingsManager.getInstance().addSettings(appWidgetId, channelSettingsTmp);
+                ChannelSettingsManager.getInstance(this).addSettings(appWidgetId, channelSettingsTmp);
                 Context context = WidgetConfigureActivity.this;
                 Widget.initializeAppWidget(context, AppWidgetManager.getInstance(context), appWidgetId);
 

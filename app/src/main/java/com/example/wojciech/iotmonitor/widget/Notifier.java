@@ -23,7 +23,7 @@ public class Notifier {
     public void sendNotification(Context context, int appWidgetId, String contentText) {
         createNotificationChannel(context);
         Intent intent = new Intent(context, ChannelActivity.class);
-        Credentials credentials = ChannelSettingsManager.getInstance().getChannelSettings(appWidgetId).getCredentials();
+        Credentials credentials = ChannelSettingsManager.getInstance(context).getChannelSettings(appWidgetId).getCredentials();
 
         intent.putExtra("credentials", credentials);
 

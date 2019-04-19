@@ -1,5 +1,6 @@
 package com.example.wojciech.iotmonitor.activities;
 
+import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.ActivityChannelBinding;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
+import com.example.wojciech.iotmonitor.viewmodel.ChannelViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,6 +24,7 @@ import java.util.Locale;
 
 public class ChannelActivity extends AppCompatActivity {
     private ActivityChannelBinding bnd;
+    private ChannelViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +39,8 @@ public class ChannelActivity extends AppCompatActivity {
         bnd.buttonChartTimeRangeHour.setChecked(true);
 
     }
-    private void setWebView(Credentials credentials, String start){
+
+    private void setWebView(Credentials credentials, String start) {
         ViewTreeObserver vto = bnd.linearLayoutChannel.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -55,12 +59,12 @@ public class ChannelActivity extends AppCompatActivity {
     private void showWebView(Credentials credentials, String start) {
         LinearLayout layout = bnd.linearLayoutChannelInflated;
         layout.removeAllViews();
-        for(int i=1;i<=8;i++) {
+        for (int i = 1; i <= 8; i++) {
             View channelView = getLayoutInflater().inflate(R.layout.channel, null);
             WebView channel = channelView.findViewById(R.id.webview);
             int width = bnd.linearLayoutChannel.getMeasuredWidth();
             int height = bnd.linearLayoutChannel.getMeasuredHeight();
-            if(height==0 || width==0){
+            if (height == 0 || width == 0) {
                 return;
             }
             Uri.Builder builder = new Uri.Builder();
@@ -92,15 +96,14 @@ public class ChannelActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
 
-        if(bnd.buttonChartTimeRangeMonth.isChecked()){
-            calendar.add(Calendar.MONTH, - amount);
-        } else if(bnd.buttonChartTimeRangeWeek.isChecked()){
-            calendar.add(Calendar.WEEK_OF_YEAR, - amount);
-        } else if(bnd.buttonChartTimeRangeDay.isChecked()){
-            calendar.add(Calendar.DAY_OF_MONTH, - amount);
-        }
-        else {
-            calendar.add(Calendar.HOUR_OF_DAY, - amount);
+        if (bnd.buttonChartTimeRangeMonth.isChecked()) {
+            calendar.add(Calendar.MONTH, -amount);
+        } else if (bnd.buttonChartTimeRangeWeek.isChecked()) {
+            calendar.add(Calendar.WEEK_OF_YEAR, -amount);
+        } else if (bnd.buttonChartTimeRangeDay.isChecked()) {
+            calendar.add(Calendar.DAY_OF_MONTH, -amount);
+        } else {
+            calendar.add(Calendar.HOUR_OF_DAY, -amount);
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
         //sdf.setTimeZone(calendar.getTimeZone());

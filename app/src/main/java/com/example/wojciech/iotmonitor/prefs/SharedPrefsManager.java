@@ -18,16 +18,16 @@ public class SharedPrefsManager {
         prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
-    public static SharedPrefsManager getInstance() {
-        if (uniqueInstance == null) {
-            throw new IllegalStateException(
-                    "SharedPrefsManager is not initialized, call initialize(applicationContext) " +
-                            "static method first");
-        }
-        return uniqueInstance;
-    }
+//    public static SharedPrefsManager getInstance() {
+//        if (uniqueInstance == null) {
+//            throw new IllegalStateException(
+//                    "SharedPrefsManager is not initialized, call getInstance(applicationContext) " +
+//                            "static method first");
+//        }
+//        return uniqueInstance;
+//    }
 
-    public static void initialize(Context context) {
+    public static SharedPrefsManager getInstance(Context context) {
         if (context == null) {
             throw new NullPointerException("Provided application context is null");
         }
@@ -38,6 +38,8 @@ public class SharedPrefsManager {
                 }
             }
         }
+        return uniqueInstance;
+
     }
 
     public <C> void setCollection(String key, C dataCollection) {

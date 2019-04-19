@@ -11,7 +11,6 @@ import android.widget.RemoteViews;
 
 import com.android.volley.VolleyError;
 import com.example.wojciech.iotmonitor.ChannelSettingsManager;
-import com.example.wojciech.iotmonitor.CredentialsManager;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.activities.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.ChannelSettings;
@@ -28,11 +27,8 @@ public class Widget extends AppWidgetProvider {
 
     public static void initializeAppWidget(Context context, AppWidgetManager appWidgetManager,
                                            int appWidgetId) {
-        ChannelSettingsManager.initialize(context);
 
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-        ChannelSettingsManager.initialize(context);
-        CredentialsManager.initialize(context);
         setValueButtonOnClick(context, appWidgetId, views);
 
         setSettingsButtonOnClick(context, appWidgetId, views);
@@ -49,7 +45,7 @@ public class Widget extends AppWidgetProvider {
     private static void setAlarm(Context context, int appWidgetId) {
         Alarm alarm = new Alarm();
         alarm.cancelAlarm(context);
-        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance();
+        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
 
         int refreshTime = channelSettingsManager.getChannelSettings(appWidgetId).getRefreshTime();
         alarm.setAlarm(context, appWidgetId, refreshTime);
@@ -58,7 +54,7 @@ public class Widget extends AppWidgetProvider {
 
     private static void setValueButtonOnClick(Context context, int appWidgetId, RemoteViews views) {
         Intent openChannelIntent = new Intent(context, ChannelActivity.class);
-        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance();
+        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
 
         ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
         openChannelIntent.putExtra("credentials", channelSettings.getCredentials());
@@ -93,8 +89,7 @@ public class Widget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
-            ChannelSettingsManager.initialize(context);
-            ChannelSettingsManager.getInstance().removeChannelSettings(appWidgetId);
+            ChannelSettingsManager.getInstance(context).removeChannelSettings(appWidgetId);
         }
     }
 
@@ -125,8 +120,7 @@ public class Widget extends AppWidgetProvider {
 
 
     private static void updateWidget(final Context context, int appWidgetId) {
-        ChannelSettingsManager.initialize(context);
-        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance();
+        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
 
         ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
         if(channelSettings==null){

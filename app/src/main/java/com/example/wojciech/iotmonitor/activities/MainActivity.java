@@ -1,9 +1,13 @@
 package com.example.wojciech.iotmonitor.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,33 +16,46 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.wojciech.iotmonitor.ChannelSettingsManager;
-import com.example.wojciech.iotmonitor.CredentialsManager;
+import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
+import com.example.wojciech.iotmonitor.viewmodel.MainViewModel;
 
-import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
+
+    private CredentialsRepository credentialsRepository;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ChannelSettingsManager.initialize(this);
-        CredentialsManager.initialize(this);
+        ChannelSettingsManager.getInstance(this);
+        CredentialsRepository.getInstance(this);
         setContentView(R.layout.activity_main);
+        credentialsRepository = CredentialsRepository.getInstance(this);
+        initViewModel();
+    }
+
+    private void initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getCredentials().observe(this, new Observer<Set<Credentials>>() {
+            @Override
+            public void onChanged(@Nullable Set<Credentials> credentials) {
+                Log.d("initViewModel", "onchange");
+                if (credentials == null || credentials.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "no saved credentials", Toast.LENGTH_LONG).show();
+                } else {
+                    showChannels(credentials);
+                }
+            }
+        });
     }
 
     @Override
     protected void onStart() {
-        HashSet<Credentials> credentials = CredentialsManager.getInstance().getCredentials();
-
-        if (credentials.isEmpty()){
-            Toast.makeText(this, "no saved credentials", Toast.LENGTH_LONG).show();
-        } else {
-            showChannels(credentials);
-        }
         super.onStart();
-
     }
 
     @Override
@@ -62,10 +79,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void showChannels(HashSet<Credentials> credentials){
+    private void showChannels(Set<Credentials> credentials) {
         LinearLayout layout = findViewById(R.id.content_main);
         layout.removeAllViews();
-        for(final Credentials creds : credentials){
+        for (final Credentials creds : credentials) {
             Button channelButton = new Button(this);
             channelButton.setText(creds.getName());
             channelButton.setOnClickListener(v -> {
@@ -73,9 +90,10 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("credentials", creds);
                 startActivity(intent);
             });
-            channelButton.setOnLongClickListener(v -> {
+            channelButton.setOnLongClickListener((View v) -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
                         .setCancelable(true);
+                builder.setMessage("Are you sure you want to delete this channel?");
                 builder.setPositiveButton(R.string.label_yes, (dialog, which) -> {
                     deleteChannel(channelButton.getText().toString());
                     dialog.cancel();
@@ -94,13 +112,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteChannel(String name) {
-        Credentials credentials = CredentialsManager.getInstance().getCredentials().stream()
-                .filter(c-> c.getName().equals(name))
-                .findFirst().orElse(null);
-        if(credentials!=null){
-            CredentialsManager.getInstance().removeCredentials(credentials.getId());
-            showChannels(CredentialsManager.getInstance().getCredentials());
-        }
+        credentialsRepository.removeCredentials(name);
+//        showChannels(viewModel.getCredentials());
+
     }
 
 }
