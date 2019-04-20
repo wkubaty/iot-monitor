@@ -150,7 +150,7 @@ public class Channel implements Serializable {
     }
 
     public String[] getFields() {
-        if(fields == null){
+        if (fields == null) {
             fields = new String[8];
             fields[0] = field1;
             fields[1] = field2;
@@ -163,7 +163,8 @@ public class Channel implements Serializable {
         }
         return fields;
     }
-    public String getField(int nr){
-        return getFields()[nr-1];
+
+    public String getField(int nr) {
+        return getFields()[nr - 1];
     }
 }

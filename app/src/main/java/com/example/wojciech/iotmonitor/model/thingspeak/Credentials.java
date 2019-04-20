@@ -10,7 +10,7 @@ public class Credentials implements Serializable {
 
     public Credentials(int id, String apiKey) {
         this.id = id;
-        this.name="";
+        this.name = "";
         this.apiKey = apiKey;
     }
 

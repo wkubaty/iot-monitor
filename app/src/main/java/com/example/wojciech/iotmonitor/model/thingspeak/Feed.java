@@ -29,7 +29,7 @@ public class Feed implements Serializable {
 
 
     public String[] getFields() {
-        if(fields == null){
+        if (fields == null) {
             fields = new String[8];
             fields[0] = field1;
             fields[1] = field2;
@@ -44,6 +44,6 @@ public class Feed implements Serializable {
     }
 
     public String getField(int nr) {
-        return getFields()[nr-1];
+        return getFields()[nr - 1];
     }
 }

@@ -16,7 +16,7 @@ public class AddChannelViewModel extends AndroidViewModel {
         credentialsRepository = CredentialsRepository.getInstance(application.getApplicationContext());
     }
 
-    public void addCredentials(Credentials credentials){
+    public void addCredentials(Credentials credentials) {
         credentialsRepository.addCredentials(credentials);
     }
 }

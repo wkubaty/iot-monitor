@@ -10,9 +10,9 @@ import java.lang.reflect.Type;
 
 public class SharedPrefsManager {
     private static final String TAG = SharedPrefsManager.class.getName();
-    private SharedPreferences prefs;
-    private static SharedPrefsManager uniqueInstance;
     private static final String PREFS_NAME = "iotmonitor";
+    private static SharedPrefsManager uniqueInstance;
+    private SharedPreferences prefs;
 
     private SharedPrefsManager(Context appContext) {
         prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -42,6 +42,11 @@ public class SharedPrefsManager {
 
     }
 
+    private static String createJSONStringFromObject(Object object) {
+        Gson gson = new Gson();
+        return gson.toJson(object);
+    }
+
     public <C> void setCollection(String key, C dataCollection) {
         SharedPreferences.Editor editor = prefs.edit();
         String value = createJSONStringFromObject(dataCollection);
@@ -61,12 +66,6 @@ public class SharedPrefsManager {
             }
         }
         return null;
-    }
-
-
-    private static String createJSONStringFromObject(Object object) {
-        Gson gson = new Gson();
-        return gson.toJson(object);
     }
 }
 

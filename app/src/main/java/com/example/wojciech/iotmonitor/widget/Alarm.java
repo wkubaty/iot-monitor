@@ -13,8 +13,8 @@ public class Alarm {
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, Widget.class);
         intent.putExtra("widgetId", appWidgetId);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE_ALARM,  intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ timeInMinutes*60*1000, pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeInMinutes * 60 * 1000, pendingIntent);
 
     }
 

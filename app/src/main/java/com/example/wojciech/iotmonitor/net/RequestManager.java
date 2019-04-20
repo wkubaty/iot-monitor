@@ -19,10 +19,11 @@ public class RequestManager {
     private static final String THINGSPEAK_URL = "https://api.thingspeak.com";
     private static RequestManager requestManager;
 
-    private RequestManager() {}
+    private RequestManager() {
+    }
 
-    public static RequestManager getInstance(){
-        if(requestManager == null){
+    public static RequestManager getInstance() {
+        if (requestManager == null) {
             requestManager = new RequestManager();
         }
         return requestManager;
@@ -39,11 +40,12 @@ public class RequestManager {
                     ThingspeakResponse thingspeakResponse = gson.fromJson(rawResponse, ThingspeakResponse.class);
                     callback.onSuccess(thingspeakResponse);
                 }, error -> {
-                    callback.onError(error);
-                });
+            callback.onError(error);
+        });
 
         queue.add(stringRequest);
     }
+
     public void requestFeedFromTo(Credentials credentials, final Context context, Date start, Date end, final VolleyCallback callback) {
         int channelId = credentials.getId();
         String apiKey = credentials.getApiKey();

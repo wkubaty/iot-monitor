@@ -37,6 +37,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     CredentialsRepository credentialsRepository;
     private ChannelSettings channelSettingsTmp = new ChannelSettings();
     private WidgetConfigureBinding bnd;
+
     public WidgetConfigureActivity() {
         super();
     }
@@ -68,7 +69,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         ChannelSettingsManager.getInstance(this);
         CredentialsRepository.getInstance(this);
         ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
-        if(channelSettings == null){
+        if (channelSettings == null) {
             //todo return?
             channelSettings = new ChannelSettings();
         }
@@ -86,7 +87,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
             builder.setAdapter(namesAdapter, (dialog, which) -> {
                 String name = namesAdapter.getItem(which);
                 bnd.wConfSelectChannel.setText(name);
-                channelSettingsTmp.setCredentials(credentialsList.stream().filter(c->c.getName().equals(name)).findFirst().get());
+                channelSettingsTmp.setCredentials(credentialsList.stream().filter(c -> c.getName().equals(name)).findFirst().get());
 
             });
             builder.setNegativeButton(R.string.label_cancel, (dialog, which) -> dialog.cancel());
@@ -94,14 +95,14 @@ public class WidgetConfigureActivity extends AppCompatActivity {
 
         });
 
-        if(channelSettings.getCredentials() != null){
+        if (channelSettings.getCredentials() != null) {
             //todo id
             bnd.wConfSelectChannel.setText(channelSettings.getCredentials().getName());
 
 
         }
 
-        ArrayAdapter<Integer> fieldsAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.channel_list_item, Arrays.asList(1,2,3,4,5,6,7,8));
+        ArrayAdapter<Integer> fieldsAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.channel_list_item, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8));
 
         bnd.wConfSelectField.setText("1");
         channelSettingsTmp.setFieldNr(1);
@@ -111,7 +112,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
                     .setCancelable(true);
             builder.setAdapter(fieldsAdapter, (dialog, which) -> {
                 bnd.wConfSelectField.setText(String.valueOf(which));
-                channelSettingsTmp.setFieldNr(which+1);
+                channelSettingsTmp.setFieldNr(which + 1);
 
             });
             builder.setNegativeButton(R.string.label_cancel, (dialog, which) -> dialog.cancel());
@@ -141,7 +142,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(ifMinValueIsLessOrEqualMaxValue()){
+                if (ifMinValueIsLessOrEqualMaxValue()) {
                     channelSettingsTmp.setMinValue(Float.valueOf(bnd.wConfMinValue.getText().toString()));
                 } else {
                     Toast.makeText(getApplicationContext(), "Min value can't be higher than max value.", Toast.LENGTH_SHORT).show();
@@ -163,13 +164,13 @@ public class WidgetConfigureActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-                try{
-                    if(ifMinValueIsLessOrEqualMaxValue()){
+                try {
+                    if (ifMinValueIsLessOrEqualMaxValue()) {
                         channelSettingsTmp.setMaxValue(Float.valueOf(bnd.wConfMaxValue.getText().toString()));
                     } else {
                         Toast.makeText(getApplicationContext(), "Max value can't be lower than min value.", Toast.LENGTH_SHORT).show();
                     }
-                } catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
 
@@ -182,8 +183,8 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         ViewTreeObserver viewTree = bnd.wConfRefreshTimeSeekbar.getViewTreeObserver();
         viewTree.addOnPreDrawListener(() -> {
             int finalWidth = bnd.wConfRefreshTimeSeekbar.getMeasuredWidth();
-            int val = (bnd.wConfRefreshTimeSeekbar.getProgress() * (finalWidth - 2 * bnd.wConfRefreshTimeSeekbar.getThumbOffset()-50)) / bnd.wConfRefreshTimeSeekbar.getMax();
-            int setx = (int) bnd.wConfRefreshTimeSeekbar.getX() + val + bnd.wConfRefreshTimeSeekbar.getThumbOffset()-20;
+            int val = (bnd.wConfRefreshTimeSeekbar.getProgress() * (finalWidth - 2 * bnd.wConfRefreshTimeSeekbar.getThumbOffset() - 50)) / bnd.wConfRefreshTimeSeekbar.getMax();
+            int setx = (int) bnd.wConfRefreshTimeSeekbar.getX() + val + bnd.wConfRefreshTimeSeekbar.getThumbOffset() - 20;
 
             bnd.wConfRefreshTimeValue.setX(setx);
 
@@ -194,10 +195,10 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         bnd.wConfRefreshTimeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                channelSettingsTmp.setRefreshTime(progress+1);
+                channelSettingsTmp.setRefreshTime(progress + 1);
                 //TODO calibrate
-                int valx = (progress * (seekBar.getWidth() - 2 * seekBar.getThumbOffset()-50)) / seekBar.getMax();
-                int setxx = (int) seekBar.getX() + valx + seekBar.getThumbOffset()-20;
+                int valx = (progress * (seekBar.getWidth() - 2 * seekBar.getThumbOffset() - 50)) / seekBar.getMax();
+                int setxx = (int) seekBar.getX() + valx + seekBar.getThumbOffset() - 20;
                 bnd.wConfRefreshTimeValue.setX(setxx);
                 bnd.wConfRefreshTimeValue.setText(String.format("%smin", channelSettingsTmp.getRefreshTime()));
             }

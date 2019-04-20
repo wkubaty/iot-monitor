@@ -14,17 +14,18 @@ import java.util.Set;
 
 public class CredentialsRepository {
 
+    private static final String CREDENTIALS_PREFS_KEY = "credentials";
     private static CredentialsRepository uniqueInstance;
     private MutableLiveData<Set<Credentials>> credentialsLive;
     private SharedPrefsManager sharedPrefsManager;
-    private static final String CREDENTIALS_PREFS_KEY = "credentials";
 
     private CredentialsRepository(Context context) {
         sharedPrefsManager = SharedPrefsManager.getInstance(context);
-        Type type = new TypeToken<HashSet<Credentials>>() {}.getType();
+        Type type = new TypeToken<HashSet<Credentials>>() {
+        }.getType();
         Set<Credentials> credentials = sharedPrefsManager.getCollection(CREDENTIALS_PREFS_KEY, type);
 
-        if (credentials==null){
+        if (credentials == null) {
             credentials = new HashSet<>();
         }
         credentialsLive = new MutableLiveData<>();
@@ -55,7 +56,7 @@ public class CredentialsRepository {
     public LiveData<Set<Credentials>> getCredentials() {
 //        HashSet<Credentials> credentials = sharedPrefsManager.getCollection(CREDENTIALS_PREFS_KEY)
 //        MutableLiveData<Set<Credentials>> credentialsLive = new MutableLiveData<>();
-       // credentialsLive.setValue(credentials);
+        // credentialsLive.setValue(credentials);
         return credentialsLive;
     }
 
@@ -68,14 +69,13 @@ public class CredentialsRepository {
     public void removeCredentials(String name) {
         Set<Credentials> credentials = credentialsLive.getValue();
         Credentials credentialsToRemove = credentials.stream()
-                .filter(c-> c.getName().equals(name))
+                .filter(c -> c.getName().equals(name))
                 .findFirst().orElse(null);
-        if(credentialsToRemove!=null){
+        if (credentialsToRemove != null) {
             credentials.remove(credentialsToRemove);
             sharedPrefsManager.setCollection(CREDENTIALS_PREFS_KEY, credentials);
         }
         credentialsLive.setValue(credentials);
-
 
 
     }

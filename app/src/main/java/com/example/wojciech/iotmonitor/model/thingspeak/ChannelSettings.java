@@ -39,6 +39,10 @@ public class ChannelSettings {
         return credentials;
     }
 
+    public void setCredentials(Credentials credentials) {
+        this.credentials = credentials;
+    }
+
     public int getFieldNr() {
         return fieldNr;
     }
@@ -86,12 +90,6 @@ public class ChannelSettings {
     public void setMaxValue(float maxValue) {
         this.maxValue = maxValue;
     }
-
-    public void setCredentials(Credentials credentials) {
-        this.credentials = credentials;
-    }
-
-
 
     @Override
     public String toString() {

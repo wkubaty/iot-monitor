@@ -10,5 +10,11 @@
     android:orientation="vertical"
     android:gravity="top|center"
     android:id="@+id/content_main">
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recycler_view">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

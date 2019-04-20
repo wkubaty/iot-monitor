@@ -11,15 +11,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChannelSettingsManager {
+    private static final String SETTINGS_PREFS_KEY = "channel_settings";
     private static volatile ChannelSettingsManager uniqueInstance;
     private static Map<Integer, ChannelSettings> settings;
-    private static final String SETTINGS_PREFS_KEY = "channel_settings";
     private final SharedPrefsManager sharedPrefsManager;
+
     private ChannelSettingsManager(Context context) {
         sharedPrefsManager = SharedPrefsManager.getInstance(context);
-        Type type = new TypeToken<HashMap<Integer, ChannelSettings>>() {}.getType();
+        Type type = new TypeToken<HashMap<Integer, ChannelSettings>>() {
+        }.getType();
         settings = sharedPrefsManager.getCollection(SETTINGS_PREFS_KEY, type);
-        if(settings == null){
+        if (settings == null) {
             settings = new HashMap<>();
         }
     }
@@ -28,9 +30,9 @@ public class ChannelSettingsManager {
         if (context == null) {
             throw new NullPointerException("Provided application context is null");
         }
-        if(uniqueInstance == null) {
-            synchronized (ChannelSettingsManager.class){
-                if(uniqueInstance == null) {
+        if (uniqueInstance == null) {
+            synchronized (ChannelSettingsManager.class) {
+                if (uniqueInstance == null) {
                     uniqueInstance = new ChannelSettingsManager(context);
                 }
             }

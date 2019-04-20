@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
@@ -11,6 +12,7 @@ import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import java.util.Set;
 
 public class MainViewModel extends AndroidViewModel {
+    private static final String TAG = MainViewModel.class.getSimpleName();
     private LiveData<Set<Credentials>> credentialsLive;
     private CredentialsRepository credentialsRepository;
 
@@ -18,10 +20,11 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         credentialsRepository = CredentialsRepository.getInstance(application.getApplicationContext());
         credentialsLive = credentialsRepository.getCredentials();
+        Log.i(TAG, "MainViewModel: credent" + credentialsLive.getValue());
 
     }
 
-    public LiveData<Set<Credentials>> getCredentials(){
+    public LiveData<Set<Credentials>> getCredentials() {
         return credentialsLive;
     }
 

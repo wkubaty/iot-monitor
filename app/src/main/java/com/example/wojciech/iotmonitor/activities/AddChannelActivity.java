@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.ActivityAddChannelBinding;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;

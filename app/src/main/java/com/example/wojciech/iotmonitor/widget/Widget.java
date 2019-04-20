@@ -78,6 +78,61 @@ public class Widget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.widget_refresh_button, widgetRefreshPendingIntent);
     }
 
+    private static void updateWidget(final Context context, int appWidgetId) {
+        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
+
+        ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
+        if (channelSettings == null) {
+            return;
+        }
+        Credentials credentials = channelSettings.getCredentials();
+        int field = channelSettings.getFieldNr();
+
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        double minValueTrigger = channelSettings.getMinValue();
+        double maxValueTrigger = channelSettings.getMaxValue();
+        boolean minTrigger = channelSettings.isMinTrigger();
+        boolean maxTrigger = channelSettings.isMaxTrigger();
+        RequestManager.getInstance().requestFeed(credentials, context, 1, new VolleyCallback() {
+            @Override
+            public void onSuccess(ThingspeakResponse thingspeakResponse) {
+                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                String formattedDate = df.format(new Date());
+                views.setTextViewText(R.id.widget_last_feed_time, formattedDate);
+                views.setTextViewText(R.id.widget_field_title, thingspeakResponse.getChannel().getFields()[field - 1]);
+                String value = thingspeakResponse.getFeeds()[0].getFields()[field - 1];
+                views.setTextViewText(R.id.widget_value_button, String.format(Locale.US, "%.1f", Float.valueOf(value)));
+                Notifier notifier = new Notifier();
+                if (maxTrigger) {
+                    if (Float.valueOf(value) >= maxValueTrigger) {
+                        views.setImageViewResource(R.id.bell_top, R.drawable.bell_on);
+                        notifier.sendNotification(context, appWidgetId, "Alarm: " + value + " is more than: " + maxValueTrigger);
+                    } else {
+                        views.setImageViewResource(R.id.bell_top, R.drawable.bell);
+                    }
+                } else if (minTrigger) {
+                    if (Float.valueOf(value) <= minValueTrigger) {
+                        views.setImageViewResource(R.id.bell_bottom, R.drawable.bell_on);
+                        notifier.sendNotification(context, appWidgetId, "Alarm: " + value + " is less than: " + minValueTrigger);
+                    } else {
+                        views.setImageViewResource(R.id.bell_bottom, R.drawable.bell);
+                    }
+                } else {
+                    views.setViewVisibility(R.id.bell_top, View.GONE);
+                    views.setViewVisibility(R.id.bell_bottom, View.GONE);
+                }
+                appWidgetManager.updateAppWidget(appWidgetId, views);
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+
+        });
+    }
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
@@ -110,68 +165,12 @@ public class Widget extends AppWidgetProvider {
 
         if (extras != null) {
             int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-            if(appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID){
+            if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 updateWidget(context, appWidgetId);
                 setAlarm(context, appWidgetId);
             }
 
         }
-    }
-
-
-    private static void updateWidget(final Context context, int appWidgetId) {
-        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
-
-        ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
-        if(channelSettings==null){
-           return;
-        }
-        Credentials credentials = channelSettings.getCredentials();
-        int field = channelSettings.getFieldNr();
-
-        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        double minValueTrigger = channelSettings.getMinValue();
-        double maxValueTrigger = channelSettings.getMaxValue();
-        boolean minTrigger = channelSettings.isMinTrigger();
-        boolean maxTrigger = channelSettings.isMaxTrigger();
-        RequestManager.getInstance().requestFeed(credentials, context, 1, new VolleyCallback() {
-            @Override
-            public void onSuccess(ThingspeakResponse thingspeakResponse) {
-                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-                SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-                String formattedDate = df.format(new Date());
-                views.setTextViewText(R.id.widget_last_feed_time, formattedDate);
-                views.setTextViewText(R.id.widget_field_title, thingspeakResponse.getChannel().getFields()[field-1]);
-                String value = thingspeakResponse.getFeeds()[0].getFields()[field-1];
-                views.setTextViewText(R.id.widget_value_button, String.format(Locale.US, "%.1f", Float.valueOf(value)));
-                Notifier notifier = new Notifier();
-                if(maxTrigger) {
-                    if (Float.valueOf(value) >= maxValueTrigger) {
-                        views.setImageViewResource(R.id.bell_top, R.drawable.bell_on);
-                        notifier.sendNotification(context, appWidgetId, "Alarm: " + value + " is more than: " + maxValueTrigger);
-                    } else {
-                        views.setImageViewResource(R.id.bell_top, R.drawable.bell);
-                    }
-                } else if(minTrigger){
-                    if(Float.valueOf(value) <= minValueTrigger) {
-                        views.setImageViewResource(R.id.bell_bottom, R.drawable.bell_on);
-                        notifier.sendNotification(context, appWidgetId,"Alarm: " + value + " is less than: " + minValueTrigger);
-                    } else {
-                        views.setImageViewResource(R.id.bell_bottom, R.drawable.bell);
-                    }
-                } else {
-                    views.setViewVisibility(R.id.bell_top, View.GONE);
-                    views.setViewVisibility(R.id.bell_bottom, View.GONE);
-                }
-                appWidgetManager.updateAppWidget(appWidgetId, views);
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-
-            }
-
-        });
     }
 
 
