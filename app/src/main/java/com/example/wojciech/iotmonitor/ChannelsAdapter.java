@@ -1,12 +1,13 @@
 package com.example.wojciech.iotmonitor;
 
+import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
+import com.example.wojciech.iotmonitor.databinding.ChannelListItemBinding;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 
 import java.util.List;
@@ -25,13 +26,13 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.channel_list_item, parent, false);
-        return new ViewHolder(view, adapterOnClickListener);
+        ChannelListItemBinding binding = DataBindingUtil.inflate(inflater, R.layout.channel_list_item, parent, false);
+        return new ViewHolder(binding, adapterOnClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.button.setText(credentials.get(i).getName());
+        viewHolder.bind(credentials.get(i));
     }
 
     @Override
@@ -47,16 +48,20 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+        private final ChannelListItemBinding binding;
+        private AdapterOnClickListener adapterOnClickListener;
 
-        Button button;
-        AdapterOnClickListener adapterOnClickListener;
-
-        public ViewHolder(@NonNull View itemView, AdapterOnClickListener adapterOnClickListener) {
-            super(itemView);
-            this.button = itemView.findViewById(R.id.channel_name_button);
+        public ViewHolder(@NonNull ChannelListItemBinding itemBinding, AdapterOnClickListener adapterOnClickListener) {
+            super(itemBinding.getRoot());
+            this.binding = itemBinding;
             this.adapterOnClickListener = adapterOnClickListener;
-            button.setOnClickListener(this);
-            button.setOnLongClickListener(this);
+
+        }
+
+        public void bind(Credentials item) {
+            binding.channelNameButton.setOnClickListener(this);
+            binding.channelNameButton.setOnLongClickListener(this);
+            binding.setItem(item);
         }
 
         @Override
@@ -68,6 +73,7 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
         public boolean onLongClick(View v) {
             return adapterOnClickListener.onChannelLongClick(getAdapterPosition());
         }
+
     }
 
 }
