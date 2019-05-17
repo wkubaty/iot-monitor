@@ -37,7 +37,7 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return credentials.size();
+        return credentials == null ? 0 : credentials.size();
     }
 
     public interface AdapterOnClickListener {

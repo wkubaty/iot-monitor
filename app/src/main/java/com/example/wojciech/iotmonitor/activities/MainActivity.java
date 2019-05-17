@@ -9,13 +9,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.wojciech.iotmonitor.ChannelSettingsManager;
 import com.example.wojciech.iotmonitor.ChannelsAdapter;
 import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
@@ -38,8 +36,6 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ChannelSettingsManager.getInstance(this);
-        CredentialsRepository.getInstance(this);
         setContentView(R.layout.activity_main);
         credentialsRepository = CredentialsRepository.getInstance(this);
         initRecyclerView();
@@ -55,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
     }
 
     private void initViewModel() {
-        Log.d("initViewModel", "onchange");
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getCredentials().observe(this, new Observer<Set<Credentials>>() {
             @Override
@@ -111,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
 
     @Override
     public void onChannelClick(int position) {
-        Log.d(TAG, "onChannelClick: ");
         Intent intent = new Intent(this, ChannelActivity.class);
         intent.putExtra("credentials", credentials.get(position));
         startActivity(intent);
@@ -119,10 +113,9 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
 
     @Override
     public boolean onChannelLongClick(int position) {
-        Log.d(TAG, "onChannelLongClick: ");
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setCancelable(true);
-        builder.setMessage("Are you sure you want to delete this channel?");
+        builder.setMessage("Are you sure you want to delete this field?");
         builder.setPositiveButton(R.string.label_yes, (dialog, which) -> {
             deleteChannel(credentials.get(position).getName());
             dialog.cancel();

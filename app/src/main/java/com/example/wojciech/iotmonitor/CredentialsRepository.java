@@ -54,9 +54,6 @@ public class CredentialsRepository {
     }
 
     public LiveData<Set<Credentials>> getCredentials() {
-//        HashSet<Credentials> credentials = sharedPrefsManager.getCollection(CREDENTIALS_PREFS_KEY)
-//        MutableLiveData<Set<Credentials>> credentialsLive = new MutableLiveData<>();
-        // credentialsLive.setValue(credentials);
         return credentialsLive;
     }
 
