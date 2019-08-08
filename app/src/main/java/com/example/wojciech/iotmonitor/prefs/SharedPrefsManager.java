@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import java.lang.reflect.Type;
 
 public class SharedPrefsManager {
-    private static final String TAG = SharedPrefsManager.class.getName();
+    private static final String TAG = SharedPrefsManager.class.getSimpleName();
     private static final String PREFS_NAME = "iotmonitor";
     private static SharedPrefsManager uniqueInstance;
     private SharedPreferences prefs;

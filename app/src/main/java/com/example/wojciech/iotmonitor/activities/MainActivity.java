@@ -3,12 +3,15 @@ package com.example.wojciech.iotmonitor.activities;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +20,8 @@ import android.widget.Toast;
 import com.example.wojciech.iotmonitor.ChannelsAdapter;
 import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
+import com.example.wojciech.iotmonitor.databinding.ActivityMainBinding;
+import com.example.wojciech.iotmonitor.databinding.WidgetConfigureBinding;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import com.example.wojciech.iotmonitor.viewmodel.MainViewModel;
 
@@ -32,11 +37,13 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
     private ChannelsAdapter channelsAdapter;
     private RecyclerView recyclerView;
     private List<Credentials> credentials = new ArrayList<>();
+    private ActivityMainBinding bnd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        bnd = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        bnd.setLifecycleOwner(this);
         credentialsRepository = CredentialsRepository.getInstance(this);
         initRecyclerView();
         initViewModel();
@@ -52,9 +59,11 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
 
     private void initViewModel() {
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        bnd.setViewmodel(viewModel);
         viewModel.getCredentials().observe(this, new Observer<Set<Credentials>>() {
             @Override
             public void onChanged(@Nullable Set<Credentials> creds) {
+                Log.d(TAG, "onChanged: initviewmodel");
                 credentials.clear();
                 credentials.addAll(creds);
 
@@ -67,9 +76,9 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
                 if (credentials == null || credentials.isEmpty()) {
                     Toast.makeText(MainActivity.this, "no saved credentials", Toast.LENGTH_LONG).show();
                 }
+                viewModel.credentialsListChanged();
             }
         });
-
     }
 
     @Override

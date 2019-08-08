@@ -26,4 +26,5 @@
     <string name="label_yes">Yes</string>
     <string name="label_cancel">Cancel</string>
     <string name="title_activity_configure_widget">Configure</string>
+    <string name="info_channel_list_is_empty">Channel list is empty</string>
 </resources>

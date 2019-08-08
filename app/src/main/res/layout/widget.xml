@@ -1,79 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:background="#444"
+        android:orientation="horizontal"
         android:padding="@dimen/widget_margin">
 
         <TextView
             android:id="@+id/widget_field_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#ffffff"
-            android:text="TITLE"/>
+            android:text="TITLE"
+            android:textColor="#ffffff" />
 
         <ImageButton
             android:id="@+id/widget_settings_button"
             style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_dehaze_white_24dp"
-            android:layout_alignParentEnd="true"/>
+            android:contentDescription="TODO" android:src="@drawable/ic_dehaze_white_24dp" />
 
         <Button
             android:id="@+id/widget_value_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/widget_field_title"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
+            android:layout_marginTop="@dimen/text_margin"
             android:background="@android:color/transparent"
             android:contentDescription="@string/appwidget_text"
             android:gravity="center"
             android:text="@string/appwidget_text"
             android:textColor="#ffffff"
             android:textSize="24sp"
-            android:textStyle="bold|italic"
-            android:layout_below="@+id/widget_field_title"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/text_margin"/>
+            android:textStyle="bold|italic" />
 
         <ImageView
             android:id="@+id/bell_top"
-            android:src="@drawable/bell"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/widget_settings_button"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="0dp" />
+            android:layout_marginEnd="0dp"
+            android:contentDescription="TODO" android:src="@drawable/bell" />
 
         <ImageView
             android:id="@+id/bell_bottom"
-            android:src="@drawable/bell"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@id/widget_refresh_button"
             android:layout_alignParentEnd="true"
-            android:layout_above="@id/widget_refresh_button" />
+            android:contentDescription="TODO" android:src="@drawable/bell" />
+
         <TextView
             android:id="@+id/widget_last_feed_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#ffffffff"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="@string/last_request_time"/>
+            android:text="@string/last_request_time"
+            android:textColor="#ffffffff" />
 
 
         <ImageButton
             android:id="@+id/widget_refresh_button"
             style="@style/Base.Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
-            android:src="@drawable/ic_refresh_white_24dp"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"/>
+            android:background="@android:color/transparent"
+            android:contentDescription="TODO" android:src="@drawable/ic_refresh_white_24dp" />
 
     </RelativeLayout>
 </layout>

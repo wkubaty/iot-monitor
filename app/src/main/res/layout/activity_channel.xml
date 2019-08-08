@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/linear_layout_channel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -11,29 +11,34 @@
             android:id="@+id/button_chart_time_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
+
             <RadioButton
                 android:id="@+id/button_chart_time_range_hour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/time_range_hour" />
+
             <RadioButton
                 android:id="@+id/button_chart_time_range_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/time_range_day" />
+
             <RadioButton
                 android:id="@+id/button_chart_time_range_week"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/time_range_week"/>
+                android:text="@string/time_range_week" />
+
             <RadioButton
                 android:id="@+id/button_chart_time_range_month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/time_range_month"/>
+                android:text="@string/time_range_month" />
         </RadioGroup>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_fields"
             android:layout_width="match_parent"
@@ -41,16 +46,16 @@
 
         </android.support.v7.widget.RecyclerView>
         <!--<ScrollView-->
-            <!--android:id="@+id/scrollView_channels"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content">-->
-            <!--<LinearLayout-->
-                <!--android:id="@+id/linear_layout_channel_inflated"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical">-->
+        <!--android:id="@+id/scrollView_channels"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+        <!--<LinearLayout-->
+        <!--android:id="@+id/linear_layout_channel_inflated"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical">-->
 
-            <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
         <!--</ScrollView>-->
 
     </LinearLayout>

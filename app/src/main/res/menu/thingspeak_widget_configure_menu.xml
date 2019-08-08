@@ -3,15 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/widget_config_menu_cancel"
-        android:title="@string/widget_cancel_menu_cancel_title"
         android:icon="@drawable/ic_cancel_24dp"
-        app:showAsAction="always">
-    </item>
+        android:title="@string/widget_cancel_menu_cancel_title"
+        app:showAsAction="always"></item>
 
     <item
         android:id="@+id/widget_config_menu_confirm"
-        android:title="@string/widget_config_menu_confirm_title"
         android:icon="@drawable/ic_check_24dp"
-        app:showAsAction="always">
-    </item>
+        android:title="@string/widget_config_menu_confirm_title"
+        app:showAsAction="always"></item>
 </menu>
