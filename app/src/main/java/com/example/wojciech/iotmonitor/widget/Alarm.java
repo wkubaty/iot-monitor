@@ -2,6 +2,7 @@ package com.example.wojciech.iotmonitor.widget;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 
@@ -12,7 +13,8 @@ public class Alarm {
     public void setAlarm(Context context, int appWidgetId, int timeInMinutes) {
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, Widget.class);
-        intent.putExtra("widgetId", appWidgetId);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeInMinutes * 60 * 1000, pendingIntent);
 

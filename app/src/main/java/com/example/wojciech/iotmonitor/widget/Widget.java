@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -24,6 +25,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Widget extends AppWidgetProvider {
+
+    private static final String TAG = AppWidgetProvider.class.getSimpleName();
 
     public static void initializeAppWidget(Context context, AppWidgetManager appWidgetManager,
                                            int appWidgetId) {
@@ -48,6 +51,7 @@ public class Widget extends AppWidgetProvider {
         ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
 
         int refreshTime = channelSettingsManager.getChannelSettings(appWidgetId).getRefreshTime();
+        Log.d(TAG, "setAlarm: " + refreshTime + " mins");
         alarm.setAlarm(context, appWidgetId, refreshTime);
 
     }
@@ -96,6 +100,7 @@ public class Widget extends AppWidgetProvider {
         RequestManager.getInstance().requestFeed(credentials, context, 1, new VolleyCallback() {
             @Override
             public void onSuccess(ThingspeakResponse thingspeakResponse) {
+                Log.d(TAG, "onSuccess: volley response");
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
                 SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                 String formattedDate = df.format(new Date());
@@ -127,7 +132,7 @@ public class Widget extends AppWidgetProvider {
 
             @Override
             public void onError(VolleyError error) {
-
+                Log.d(TAG, "onError: volley response");
             }
 
         });
@@ -162,7 +167,6 @@ public class Widget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         Bundle extras = intent.getExtras();
-
         if (extras != null) {
             int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
             if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {

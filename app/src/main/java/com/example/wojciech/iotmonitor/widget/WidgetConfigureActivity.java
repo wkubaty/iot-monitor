@@ -5,14 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.ViewTreeObserver;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class WidgetConfigureActivity extends AppCompatActivity {
-
+    private static final String TAG = "WidgetConfigureActivity";
     int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     ChannelSettingsManager channelSettingsManager;
     CredentialsRepository credentialsRepository;
@@ -79,47 +79,38 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         final List<String> names = credentialsList.stream()
                 .map(Credentials::getName)
                 .collect(Collectors.toList());
-        ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.channel_list_item, names);
+        ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.widget_spinner_item, names);
+        bnd.wConfChannelsSpinner.setAdapter(namesAdapter);
+        bnd.wConfChannelsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                channelSettingsTmp.setCredentials(credentialsList.stream().filter(c -> c.getName().equals(namesAdapter.getItem(position))).findFirst().get());
 
-        bnd.wConfChannelsCardView.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(WidgetConfigureActivity.this)
-                    .setCancelable(true);
-            builder.setAdapter(namesAdapter, (dialog, which) -> {
-                String name = namesAdapter.getItem(which);
-                bnd.wConfSelectChannel.setText(name);
-                channelSettingsTmp.setCredentials(credentialsList.stream().filter(c -> c.getName().equals(name)).findFirst().get());
+            }
 
-            });
-            builder.setNegativeButton(R.string.label_cancel, (dialog, which) -> dialog.cancel());
-            builder.show();
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-        });
-
-        if (channelSettings.getCredentials() != null) {
-            //todo id
-            bnd.wConfSelectChannel.setText(channelSettings.getCredentials().getName());
-
-
-        }
-
-        ArrayAdapter<Integer> fieldsAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.channel_list_item, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8));
-
-        bnd.wConfSelectField.setText("1");
-        channelSettingsTmp.setFieldNr(1);
-
-        bnd.wConfFieldsCardView.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(WidgetConfigureActivity.this)
-                    .setCancelable(true);
-            builder.setAdapter(fieldsAdapter, (dialog, which) -> {
-                bnd.wConfSelectField.setText(String.valueOf(which));
-                channelSettingsTmp.setFieldNr(which + 1);
-
-            });
-            builder.setNegativeButton(R.string.label_cancel, (dialog, which) -> dialog.cancel());
-            builder.show();
+            }
 
         });
 
+
+        ArrayAdapter<Integer> fieldsAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.widget_spinner_item, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8));
+
+        bnd.wConfFieldsSpinner.setAdapter(fieldsAdapter);
+        bnd.wConfFieldsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                channelSettingsTmp.setFieldNr(position + 1);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
             channelSettingsTmp.setMinTrigger(bnd.wConfMinTrigger.isChecked());
@@ -180,27 +171,11 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         bnd.wConfMinValue.addTextChangedListener(textWatcherMin);
         bnd.wConfMaxValue.addTextChangedListener(textWatcherMax);
 
-        ViewTreeObserver viewTree = bnd.wConfRefreshTimeSeekbar.getViewTreeObserver();
-        viewTree.addOnPreDrawListener(() -> {
-            int finalWidth = bnd.wConfRefreshTimeSeekbar.getMeasuredWidth();
-            int val = (bnd.wConfRefreshTimeSeekbar.getProgress() * (finalWidth - 2 * bnd.wConfRefreshTimeSeekbar.getThumbOffset() - 50)) / bnd.wConfRefreshTimeSeekbar.getMax();
-            int setx = (int) bnd.wConfRefreshTimeSeekbar.getX() + val + bnd.wConfRefreshTimeSeekbar.getThumbOffset() - 20;
-
-            bnd.wConfRefreshTimeValue.setX(setx);
-
-            return true;
-        });
-        bnd.wConfRefreshTimeValue.setText(String.format("%smin", String.valueOf(channelSettings.getRefreshTime())));
-
         bnd.wConfRefreshTimeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 channelSettingsTmp.setRefreshTime(progress + 1);
-                //TODO calibrate
-                int valx = (progress * (seekBar.getWidth() - 2 * seekBar.getThumbOffset() - 50)) / seekBar.getMax();
-                int setxx = (int) seekBar.getX() + valx + seekBar.getThumbOffset() - 20;
-                bnd.wConfRefreshTimeValue.setX(setxx);
-                bnd.wConfRefreshTimeValue.setText(String.format("%smin", channelSettingsTmp.getRefreshTime()));
+                bnd.wConfRefreshTimeValue.setText(String.format("%s min", channelSettingsTmp.getRefreshTime()));
             }
 
             @Override
