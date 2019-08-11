@@ -48,6 +48,7 @@ public class CredentialsRepository {
 
     public void addCredentials(Credentials creds) {
         Set<Credentials> credentials = credentialsLive.getValue();
+        removeCredentials(creds.getId());
         credentials.add(creds);
         sharedPrefsManager.setCollection(CREDENTIALS_PREFS_KEY, credentials);
         credentialsLive.setValue(credentials);
@@ -59,22 +60,15 @@ public class CredentialsRepository {
 
     public void removeCredentials(int id) {
         Set<Credentials> credentials = credentialsLive.getValue();
-        credentials.removeIf(creds -> creds.getId() == id);
-        sharedPrefsManager.setCollection(CREDENTIALS_PREFS_KEY, credentials);
-    }
-
-    public void removeCredentials(String name) {
-        Set<Credentials> credentials = credentialsLive.getValue();
         Credentials credentialsToRemove = credentials.stream()
-                .filter(c -> c.getName().equals(name))
+                .filter(c -> c.getId() == id)
                 .findFirst().orElse(null);
         if (credentialsToRemove != null) {
             credentials.remove(credentialsToRemove);
             sharedPrefsManager.setCollection(CREDENTIALS_PREFS_KEY, credentials);
         }
         credentialsLive.setValue(credentials);
-
-
     }
+
 
 }

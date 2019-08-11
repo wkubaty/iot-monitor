@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
+
 public class ChannelInfo implements Parcelable {
     private int id;
     private String name;
@@ -87,4 +89,12 @@ public class ChannelInfo implements Parcelable {
             return new ChannelInfo[size];
         }
     };
+
+    public int getId() {
+        return id;
+    }
+
+    public String getReadApiKey() {
+        return Arrays.stream(apiKeys).filter(ApiKey::isWriteFlag).findAny().get().getApiKey();
+    }
 }

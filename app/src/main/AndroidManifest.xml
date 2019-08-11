@@ -13,9 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
-            android:name="com.example.wojciech.iotmonitor.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,10 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.wojciech.iotmonitor.activities.AddChannelActivity" />
-        <activity android:name="com.example.wojciech.iotmonitor.activities.ChannelActivity" />
+        <activity android:name=".features.adding.ui.AddChannelActivity" />
+        <activity android:name=".activities.ChannelActivity" />
 
-        <receiver android:name="com.example.wojciech.iotmonitor.widget.Widget">
+        <receiver android:name=".widget.Widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -38,7 +37,7 @@
         <receiver android:name=".widget.WidgetConfigureActivity" />
 
         <activity
-            android:name="com.example.wojciech.iotmonitor.widget.WidgetConfigureActivity"
+            android:name=".widget.WidgetConfigureActivity"
             android:label="@string/title_activity_configure_widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />

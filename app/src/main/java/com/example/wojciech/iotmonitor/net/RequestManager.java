@@ -8,10 +8,15 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import com.example.wojciech.iotmonitor.model.thingspeak.ThingspeakResponse;
+import com.example.wojciech.iotmonitor.model.thingspeak.info.ChannelInfo;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -60,6 +65,25 @@ public class RequestManager {
                     Gson gson = new Gson();
                     ThingspeakResponse thingspeakResponse = gson.fromJson(rawResponse, ThingspeakResponse.class);
                     callback.onSuccess(thingspeakResponse);
+                }, error -> {
+            callback.onError(error);
+        });
+
+        queue.add(stringRequest);
+    }
+
+    public void requestChannelInfo(String userApiKey, final Context context, final AccountInfoVolleyCallback callback) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        String url = String.format("%s/channels.json?api_key=%s", THINGSPEAK_URL, userApiKey);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                rawResponse -> {
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<ChannelInfo>>() {
+                    }.getType();
+
+                    ArrayList<ChannelInfo> response = gson.fromJson(rawResponse, listType);
+
+                    callback.onSuccess(response);
                 }, error -> {
             callback.onError(error);
         });

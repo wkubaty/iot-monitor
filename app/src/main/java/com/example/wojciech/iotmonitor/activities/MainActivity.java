@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -21,7 +20,7 @@ import com.example.wojciech.iotmonitor.ChannelsAdapter;
 import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.ActivityMainBinding;
-import com.example.wojciech.iotmonitor.databinding.WidgetConfigureBinding;
+import com.example.wojciech.iotmonitor.features.adding.ui.AddChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import com.example.wojciech.iotmonitor.viewmodel.MainViewModel;
 
@@ -108,8 +107,8 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
     }
 
 
-    private void deleteChannel(String name) {
-        credentialsRepository.removeCredentials(name);
+    private void deleteChannel(int id) {
+        credentialsRepository.removeCredentials(id);
 
     }
 
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
                 .setCancelable(true);
         builder.setMessage("Are you sure you want to delete this field?");
         builder.setPositiveButton(R.string.label_yes, (dialog, which) -> {
-            deleteChannel(credentials.get(position).getName());
+            deleteChannel(credentials.get(position).getId());
             dialog.cancel();
         });
         builder.setNegativeButton(R.string.label_cancel, (dialog, which) -> {

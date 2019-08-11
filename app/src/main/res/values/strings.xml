@@ -27,4 +27,9 @@
     <string name="label_cancel">Cancel</string>
     <string name="title_activity_configure_widget">Configure</string>
     <string name="info_channel_list_is_empty">Channel list is empty</string>
+    <string name="title_activity_tabs">Tabs</string>
+    <string name="tab_text_1">All Channels</string>
+    <string name="tab_text_2">Single Channel</string>
+    <string name="user_api_key">User API Key</string>
+    <string name="isPrivate">Private</string>
 </resources>

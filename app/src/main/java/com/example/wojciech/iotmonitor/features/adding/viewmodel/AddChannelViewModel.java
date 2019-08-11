@@ -1,4 +1,4 @@
-package com.example.wojciech.iotmonitor.viewmodel;
+package com.example.wojciech.iotmonitor.features.adding.viewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;

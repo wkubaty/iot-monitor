@@ -1,26 +1,27 @@
-package com.example.wojciech.iotmonitor.activities;
+package com.example.wojciech.iotmonitor.features.adding.ui;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.ActivityAddChannelBinding;
+import com.example.wojciech.iotmonitor.features.adding.IChannelProvider;
+import com.example.wojciech.iotmonitor.features.adding.adapter.SectionsPagerAdapter;
+import com.example.wojciech.iotmonitor.features.adding.viewmodel.AddChannelViewModel;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import com.example.wojciech.iotmonitor.model.thingspeak.ThingspeakResponse;
 import com.example.wojciech.iotmonitor.net.RequestManager;
 import com.example.wojciech.iotmonitor.net.VolleyCallback;
-import com.example.wojciech.iotmonitor.viewmodel.AddChannelViewModel;
 
 
-public class AddChannelActivity extends AppCompatActivity {
-    private int channeldId;
-    private String apiKey;
+public class AddChannelActivity extends AppCompatActivity implements IChannelProvider {
     private ActivityAddChannelBinding bnd;
     private AddChannelViewModel viewModel;
 
@@ -31,6 +32,11 @@ public class AddChannelActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_channel);
         bnd = DataBindingUtil.setContentView(this, R.layout.activity_add_channel);
         initViewModel();
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        sectionsPagerAdapter.addFragment(new TabMultipleChannelsFragment());
+        sectionsPagerAdapter.addFragment(new TabSingleChannelFragment());
+        bnd.viewPager.setAdapter(sectionsPagerAdapter);
+        bnd.tabs.setupWithViewPager(bnd.viewPager);
 
     }
 
@@ -38,12 +44,10 @@ public class AddChannelActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(AddChannelViewModel.class);
     }
 
-    public void searchChannel(View view) {
-        channeldId = Integer.valueOf(bnd.channelId.getText().toString());
-        apiKey = bnd.apiKey.getText().toString();
-
+    @Override
+    public void addChannel(int channelId, String apiKey) {
         try {
-            Credentials credentials = new Credentials(channeldId, apiKey);
+            Credentials credentials = new Credentials(channelId, apiKey);
             RequestManager.getInstance().requestFeed(credentials, getApplicationContext(), 0, new VolleyCallback() {
                 @Override
                 public void onSuccess(ThingspeakResponse thingspeakResponse) {
@@ -55,8 +59,6 @@ public class AddChannelActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(VolleyError error) {
-//                    setResult(RESULT_CANCELED, new Intent().putExtra("error", error));
-//                    finish();
                     Toast.makeText(AddChannelActivity.this, "Wrong credentials, try again", Toast.LENGTH_SHORT).show();
                 }
             });

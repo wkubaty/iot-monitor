@@ -43,4 +43,13 @@ public class ApiKey implements Parcelable {
             return new ApiKey[size];
         }
     };
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+
+    public boolean isWriteFlag() {
+        return writeFlag;
+    }
 }
