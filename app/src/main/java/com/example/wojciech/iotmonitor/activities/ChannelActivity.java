@@ -42,7 +42,7 @@ public class ChannelActivity extends AppCompatActivity {
         bnd.buttonChartTimeGroup.setOnCheckedChangeListener((group, checkedId) ->
                 showWebView(credentials, getStartDate()));
         bnd.buttonChartTimeRangeHour.setChecked(true);
-
+        bnd.channelToolbar.setTitle(credentials.getName());
         initRecyclerView();
         initViewModel();
         setWebView(credentials, getStartDate());

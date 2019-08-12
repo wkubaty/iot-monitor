@@ -25,6 +25,7 @@ import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import com.example.wojciech.iotmonitor.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -65,7 +66,12 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
                 Log.d(TAG, "onChanged: initviewmodel");
                 credentials.clear();
                 credentials.addAll(creds);
-
+                credentials.sort(new Comparator<Credentials>() {
+                    @Override
+                    public int compare(Credentials o1, Credentials o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
                 if (channelsAdapter == null) {
                     channelsAdapter = new ChannelsAdapter(credentials, MainActivity.this);
                     recyclerView.setAdapter(channelsAdapter);
