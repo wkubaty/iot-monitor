@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -35,6 +36,7 @@ public class AddChannelActivity extends AppCompatActivity implements IChannelPro
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         sectionsPagerAdapter.addFragment(new TabMultipleChannelsFragment());
         sectionsPagerAdapter.addFragment(new TabSingleChannelFragment());
+        bnd.addChannelToolbar.setNavigationOnClickListener(v -> onBackPressed());
         bnd.viewPager.setAdapter(sectionsPagerAdapter);
         bnd.tabs.setupWithViewPager(bnd.viewPager);
 

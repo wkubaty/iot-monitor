@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
@@ -43,6 +44,7 @@ public class ChannelActivity extends AppCompatActivity {
                 showWebView(credentials, getStartDate()));
         bnd.buttonChartTimeRangeHour.setChecked(true);
         bnd.channelToolbar.setTitle(credentials.getName());
+        bnd.channelToolbar.setNavigationOnClickListener(v -> onBackPressed());
         initRecyclerView();
         initViewModel();
         setWebView(credentials, getStartDate());
