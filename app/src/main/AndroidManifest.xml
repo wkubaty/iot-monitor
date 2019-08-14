@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".features.adding.ui.AddChannelActivity" />
-        <activity android:name=".activities.ChannelActivity" />
+        <activity android:name=".features.channel.ChannelActivity" />
 
         <receiver android:name=".widget.Widget">
             <intent-filter>

@@ -21,6 +21,7 @@ import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.ActivityMainBinding;
 import com.example.wojciech.iotmonitor.features.adding.ui.AddChannelActivity;
+import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import com.example.wojciech.iotmonitor.viewmodel.MainViewModel;
 

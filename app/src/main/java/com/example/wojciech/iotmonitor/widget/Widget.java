@@ -13,7 +13,7 @@ import android.widget.RemoteViews;
 import com.android.volley.VolleyError;
 import com.example.wojciech.iotmonitor.ChannelSettingsManager;
 import com.example.wojciech.iotmonitor.R;
-import com.example.wojciech.iotmonitor.activities.ChannelActivity;
+import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.ChannelSettings;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import com.example.wojciech.iotmonitor.model.thingspeak.ThingspeakResponse;

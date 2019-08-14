@@ -1,4 +1,4 @@
-package com.example.wojciech.iotmonitor.activities;
+package com.example.wojciech.iotmonitor.features.channel;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -9,21 +9,20 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import com.example.wojciech.iotmonitor.FieldsAdapter;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.ActivityChannelBinding;
+import com.example.wojciech.iotmonitor.features.channel.webviews.AbstractWebView;
+import com.example.wojciech.iotmonitor.features.channel.webviews.DayWebView;
+import com.example.wojciech.iotmonitor.features.channel.webviews.HourWebView;
+import com.example.wojciech.iotmonitor.features.channel.webviews.MonthWebView;
+import com.example.wojciech.iotmonitor.features.channel.webviews.WeekWebView;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
-import com.example.wojciech.iotmonitor.viewmodel.ChannelViewModel;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ChannelActivity extends AppCompatActivity {
     private static final String TAG = ChannelActivity.class.getSimpleName();
@@ -40,16 +39,28 @@ public class ChannelActivity extends AppCompatActivity {
         Credentials credentials = (Credentials) intent.getSerializableExtra("credentials");
 
         bnd = DataBindingUtil.setContentView(this, R.layout.activity_channel);
-        bnd.buttonChartTimeGroup.setOnCheckedChangeListener((group, checkedId) ->
-                showWebView(credentials, getStartDate()));
+        initRecyclerView();
+        initViewModel();
+        showWebView(new HourWebView(credentials));
+
+        bnd.buttonChartTimeGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            showWebView(new HourWebView(credentials));
+        });
+        bnd.buttonChartTimeRangeHour.setOnClickListener(v -> setWebView(new HourWebView(credentials)));
+        bnd.buttonChartTimeRangeDay.setOnClickListener(v -> setWebView(new DayWebView(credentials)));
+        bnd.buttonChartTimeRangeWeek.setOnClickListener(v -> setWebView(new WeekWebView(credentials)));
+        bnd.buttonChartTimeRangeMonth.setOnClickListener(v -> setWebView(new MonthWebView(credentials)));
+
+
         bnd.buttonChartTimeRangeHour.setChecked(true);
         bnd.channelToolbar.setTitle(credentials.getName());
         bnd.channelToolbar.setNavigationOnClickListener(v -> onBackPressed());
         initRecyclerView();
         initViewModel();
-        setWebView(credentials, getStartDate());
+        setWebView(new HourWebView(credentials));
 
     }
+
 
     private void initRecyclerView() {
         recyclerView = bnd.recyclerViewFields;
@@ -76,44 +87,26 @@ public class ChannelActivity extends AppCompatActivity {
         });
     }
 
-    private void setWebView(Credentials credentials, String start) {
+    private void setWebView(AbstractWebView webView) {
         ViewTreeObserver vto = bnd.linearLayoutChannel.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 LinearLayout layout = bnd.linearLayoutChannel;
                 layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                showWebView(credentials, start);
+                showWebView(webView);
             }
         });
     }
 
-    private void showWebView(Credentials credentials, String start) {
+    private void showWebView(AbstractWebView webView) {
         int width = bnd.linearLayoutChannel.getMeasuredWidth();
         int height = bnd.linearLayoutChannel.getMeasuredHeight();
         if (height == 0 || width == 0) {
             return;
         }
         float density = getResources().getDisplayMetrics().density;
-        viewModel.showWebView(credentials, start, width, height, density);
+        viewModel.showWebView(webView, width, height, density);
     }
 
-    private String getStartDate() {
-        int amount = 1;
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-
-        if (bnd.buttonChartTimeRangeMonth.isChecked()) {
-            calendar.add(Calendar.MONTH, -amount);
-        } else if (bnd.buttonChartTimeRangeWeek.isChecked()) {
-            calendar.add(Calendar.WEEK_OF_YEAR, -amount);
-        } else if (bnd.buttonChartTimeRangeDay.isChecked()) {
-            calendar.add(Calendar.DAY_OF_MONTH, -amount);
-        } else {
-            calendar.add(Calendar.HOUR_OF_DAY, -amount);
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-        //sdf.setTimeZone(calendar.getTimeZone());
-        return sdf.format(calendar.getTime());
-    }
 }

@@ -11,7 +11,7 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import com.example.wojciech.iotmonitor.ChannelSettingsManager;
 import com.example.wojciech.iotmonitor.R;
-import com.example.wojciech.iotmonitor.activities.ChannelActivity;
+import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 
 import static android.support.v4.content.ContextCompat.getSystemService;

@@ -28,7 +28,8 @@
             android:id="@+id/linear_layout_channel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <RadioGroup
                 android:id="@+id/button_chart_time_group"
@@ -41,18 +42,21 @@
                     android:id="@+id/button_chart_time_range_hour"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/padding"
                     android:text="@string/time_range_hour" />
 
                 <RadioButton
                     android:id="@+id/button_chart_time_range_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/padding"
                     android:text="@string/time_range_day" />
 
                 <RadioButton
                     android:id="@+id/button_chart_time_range_week"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/padding"
                     android:text="@string/time_range_week" />
 
                 <RadioButton
