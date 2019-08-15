@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.example.wojciech.iotmonitor.databinding.FieldBinding;
 
 import java.util.List;
+import java.util.Locale;
 
 public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder> {
     public static final String TAG = FieldsAdapter.class.getSimpleName();
@@ -33,7 +34,7 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.bind(urls.get(i));
+        viewHolder.bind(urls.get(i), i);
     }
 
     @Override
@@ -50,7 +51,8 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
             this.binding = itemBinding;
         }
 
-        public void bind(String url) {
+        public void bind(String url, int i) {
+            binding.setTitle(String.format(Locale.ENGLISH,"Field %d Chart", i+1));
             binding.webview.getSettings().setJavaScriptEnabled(true);
             binding.webview.loadUrl(url);
 

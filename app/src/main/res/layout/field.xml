@@ -11,18 +11,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp">
 
-        <TextView
-            android:id="@+id/channel_title"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@{title}" />
+            android:layout_height="match_parent"
+            android:background="@color/gray"
+            android:orientation="vertical">
 
-        <WebView
-            android:id="@+id/webview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue"
+                android:subtitle="@{title}"
+                android:subtitleTextColor="@android:color/white">
+
+            </Toolbar>
+
+
+            <WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding"
+                android:layout_marginStart="@dimen/padding"
+                android:layout_marginEnd="@dimen/padding"
+                android:layout_marginBottom="@dimen/padding"/>
+        </LinearLayout>
     </LinearLayout>
+
 </layout>
