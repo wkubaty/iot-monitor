@@ -9,14 +9,17 @@
 
         <variable
             name="viewmodel"
-            type="com.example.wojciech.iotmonitor.viewmodel.MainViewModel" />
+            type="com.example.wojciech.iotmonitor.features.main.MainViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.wojciech.iotmonitor.activities.MainActivity">
+        android:gravity="top|center"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.example.wojciech.iotmonitor.features.main.MainActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -33,14 +36,29 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <include layout="@layout/content_main" />
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{viewmodel.isLoading ? View.VISIBLE : View.GONE}" />
+
+        <ExpandableListView
+            android:id="@+id/expandableListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="0.5dp"
+            android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:visibility="@{viewmodel.isLoading ? View.GONE : View.VISIBLE}" />
+
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/info_channel_list_is_empty"
             android:layout_gravity="center"
+            android:text="@string/info_channel_list_is_empty"
             android:visibility="@{viewmodel.isChannelListEmpty ? View.VISIBLE : View.GONE}" />
 
         <android.support.design.widget.FloatingActionButton

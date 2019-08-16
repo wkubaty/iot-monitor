@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/activity_add_channel"
@@ -18,11 +17,11 @@
                 android:id="@+id/add_channel_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:minHeight="?actionBarSize"
                 android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
+                android:minHeight="?actionBarSize"
                 app:navigationIcon="?attr/homeAsUpIndicator"
-                app:title="Add channel"/>
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:title="Add channel" />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"

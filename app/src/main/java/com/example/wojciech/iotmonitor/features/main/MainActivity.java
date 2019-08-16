@@ -1,4 +1,4 @@
-package com.example.wojciech.iotmonitor.activities;
+package com.example.wojciech.iotmonitor.features.main;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -8,13 +8,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.wojciech.iotmonitor.ChannelsAdapter;
 import com.example.wojciech.iotmonitor.CredentialsRepository;
@@ -23,10 +19,9 @@ import com.example.wojciech.iotmonitor.databinding.ActivityMainBinding;
 import com.example.wojciech.iotmonitor.features.adding.ui.AddChannelActivity;
 import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
-import com.example.wojciech.iotmonitor.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -35,10 +30,10 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
     public static final String TAG = MainActivity.class.getSimpleName();
     private CredentialsRepository credentialsRepository;
     private MainViewModel viewModel;
-    private ChannelsAdapter channelsAdapter;
-    private RecyclerView recyclerView;
     private List<Credentials> credentials = new ArrayList<>();
     private ActivityMainBinding bnd;
+    private ArrayList<String> expandableListTitle;
+    private CustomExpandableListAdapter expandableListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,42 +41,40 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
         bnd = DataBindingUtil.setContentView(this, R.layout.activity_main);
         bnd.setLifecycleOwner(this);
         credentialsRepository = CredentialsRepository.getInstance(this);
-        initRecyclerView();
+
         initViewModel();
-    }
-
-    private void initRecyclerView() {
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
     }
 
     private void initViewModel() {
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.init();
+        bnd.setLifecycleOwner(this);
         bnd.setViewmodel(viewModel);
         viewModel.getCredentials().observe(this, new Observer<Set<Credentials>>() {
             @Override
             public void onChanged(@Nullable Set<Credentials> creds) {
-                Log.d(TAG, "onChanged: initviewmodel");
                 credentials.clear();
                 credentials.addAll(creds);
-                credentials.sort(new Comparator<Credentials>() {
+                credentials.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+                viewModel.addChannels(credentials);
+
+                viewModel.getExpandableListDetailLiveData().observe(MainActivity.this, new Observer<HashMap<String, List<FieldValueListItem>>>() {
                     @Override
-                    public int compare(Credentials o1, Credentials o2) {
-                        return o1.getName().compareTo(o2.getName());
+                    public void onChanged(@Nullable HashMap<String, List<FieldValueListItem>> stringListHashMap) {
+                        if (stringListHashMap != null) {
+                            expandableListTitle = new ArrayList<>(stringListHashMap.keySet());
+                            expandableListTitle.sort(String::compareTo);
+                        }
+
+                        expandableListAdapter = new CustomExpandableListAdapter(MainActivity.this, expandableListTitle, stringListHashMap, credentials);
+                        bnd.expandableListView.setAdapter(expandableListAdapter);
+                        bnd.expandableListView.setOnGroupExpandListener(groupPosition -> {
+                        });
+
                     }
+
                 });
-                if (channelsAdapter == null) {
-                    channelsAdapter = new ChannelsAdapter(credentials, MainActivity.this);
-                    recyclerView.setAdapter(channelsAdapter);
-                } else {
-                    channelsAdapter.notifyDataSetChanged();
-                }
-                if (credentials == null || credentials.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "no saved credentials", Toast.LENGTH_LONG).show();
-                }
+
                 viewModel.credentialsListChanged();
             }
         });

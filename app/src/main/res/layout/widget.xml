@@ -22,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:background="@android:color/transparent"
-            android:contentDescription="TODO" android:src="@drawable/ic_dehaze_white_24dp" />
+            android:contentDescription="TODO"
+            android:src="@drawable/ic_dehaze_white_24dp" />
 
         <Button
             android:id="@+id/widget_value_button"
@@ -47,7 +48,8 @@
             android:layout_below="@+id/widget_settings_button"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="0dp"
-            android:contentDescription="TODO" android:src="@drawable/bell" />
+            android:contentDescription="TODO"
+            android:src="@drawable/bell" />
 
         <ImageView
             android:id="@+id/bell_bottom"
@@ -55,7 +57,8 @@
             android:layout_height="wrap_content"
             android:layout_above="@id/widget_refresh_button"
             android:layout_alignParentEnd="true"
-            android:contentDescription="TODO" android:src="@drawable/bell" />
+            android:contentDescription="TODO"
+            android:src="@drawable/bell" />
 
         <TextView
             android:id="@+id/widget_last_feed_time"
@@ -75,7 +78,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:background="@android:color/transparent"
-            android:contentDescription="TODO" android:src="@drawable/ic_refresh_white_24dp" />
+            android:contentDescription="TODO"
+            android:src="@drawable/ic_refresh_white_24dp" />
 
     </RelativeLayout>
 </layout>
