@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
+    <!--<data>-->
 
-        <variable
-            name="channelSettings"
-            type="com.example.wojciech.iotmonitor.model.thingspeak.ChannelSettings" />
-    </data>
+    <!--<variable-->
+    <!--name="channelSettings"-->
+    <!--type="com.example.wojciech.iotmonitor.model.thingspeak.ChannelSettings" />-->
+    <!--</data>-->
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        <LinearLayout
             android:id="@+id/w_conf_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -56,12 +57,6 @@
 
                     </Spinner>
 
-                    <!--<TextView-->
-                    <!--android:id="@+id/w_conf_select_channel"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:textColor="@android:color/darker_gray"-->
-                    <!--android:textSize="@dimen/text_size_h3" />-->
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
@@ -92,13 +87,6 @@
 
                     </Spinner>
 
-
-                    <!--<TextView-->
-                    <!--android:id="@+id/w_conf_select_field"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:textColor="@android:color/darker_gray"-->
-                    <!--android:textSize="@dimen/text_size_h3" />-->
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
@@ -121,7 +109,6 @@
                     android:id="@+id/w_conf_min_trigger"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="@{channelSettings.minTrigger}"
                     android:text="@string/min_value" />
 
                 <EditText
@@ -129,14 +116,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="numberDecimal"
-                    android:text="@{String.valueOf(channelSettings.minValue)}" />
+                    android:inputType="numberDecimal" />
 
                 <CheckBox
                     android:id="@+id/w_conf_max_trigger"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="@{channelSettings.maxTrigger}"
                     android:text="@string/max_value" />
 
                 <EditText
@@ -144,8 +129,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:inputType="numberDecimal"
-                    android:text="@{String.valueOf(channelSettings.maxValue)}" />
+                    android:inputType="numberDecimal" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -167,7 +151,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@{String.valueOf(channelSettings.refreshTime) + ` min`}"
                         tools:text="10min" />
 
                     <SeekBar
@@ -175,9 +158,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="10"
-                        android:max="59"
-                        android:progress="@{channelSettings.refreshTime}" />
+                        android:max="59" />
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/background_color" />
+
+                <Button
+                    android:id="@+id/set_color_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="setColor" />
             </LinearLayout>
 
         </LinearLayout>

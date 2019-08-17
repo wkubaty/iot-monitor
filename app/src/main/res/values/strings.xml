@@ -32,4 +32,5 @@
     <string name="tab_text_2">Single Channel</string>
     <string name="user_api_key">User API Key</string>
     <string name="isPrivate">Private</string>
+    <string name="background_color">Background color</string>
 </resources>

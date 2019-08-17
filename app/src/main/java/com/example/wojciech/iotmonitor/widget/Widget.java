@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,15 +31,27 @@ public class Widget extends AppWidgetProvider {
 
     public static void initializeAppWidget(Context context, AppWidgetManager appWidgetManager,
                                            int appWidgetId) {
-
+        Log.d(TAG, "initializeAppWidget: ");
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
         setValueButtonOnClick(context, appWidgetId, views);
 
         setSettingsButtonOnClick(context, appWidgetId, views);
 
         setRefreshButtonOnClick(context, appWidgetId, views);
-
         setAlarm(context, appWidgetId);
+        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
+
+        ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
+        if (channelSettings == null) {
+            return;
+        }
+
+        String bgColor = channelSettings.getBgColor();
+
+        int parseColor = Color.parseColor(bgColor);
+
+        views.setInt(R.id.w_layout, "setBackgroundColor", parseColor);
+
         updateWidget(context, appWidgetId);
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -97,6 +110,11 @@ public class Widget extends AppWidgetProvider {
         double maxValueTrigger = channelSettings.getMaxValue();
         boolean minTrigger = channelSettings.isMinTrigger();
         boolean maxTrigger = channelSettings.isMaxTrigger();
+        String bgColor = channelSettings.getBgColor();
+
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+        views.setInt(R.id.w_layout, "setBackgroundColor", Color.parseColor(bgColor));
+        appWidgetManager.updateAppWidget(appWidgetId, views);
         RequestManager.getInstance().requestFeed(credentials, context, 1, new VolleyCallback() {
             @Override
             public void onSuccess(ThingspeakResponse thingspeakResponse) {
@@ -107,7 +125,14 @@ public class Widget extends AppWidgetProvider {
                 views.setTextViewText(R.id.widget_last_feed_time, formattedDate);
                 views.setTextViewText(R.id.widget_field_title, thingspeakResponse.getChannel().getFields()[field - 1]);
                 String value = thingspeakResponse.getFeeds()[0].getFields()[field - 1];
+                if (value == null || value.isEmpty()) {
+                    views.setTextViewText(R.id.widget_value_button, "--");
+                    appWidgetManager.updateAppWidget(appWidgetId, views);
+                    return;
+                }
                 views.setTextViewText(R.id.widget_value_button, String.format(Locale.US, "%.1f", Float.valueOf(value)));
+
+
                 Notifier notifier = new Notifier();
                 if (maxTrigger) {
                     if (Float.valueOf(value) >= maxValueTrigger) {
@@ -165,12 +190,13 @@ public class Widget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "onReceive: Update widget");
         super.onReceive(context, intent);
         Bundle extras = intent.getExtras();
         if (extras != null) {
             int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
             if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                updateWidget(context, appWidgetId);
+                updateWidget(context.getApplicationContext(), appWidgetId);
                 setAlarm(context, appWidgetId);
             }
 

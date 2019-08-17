@@ -8,6 +8,7 @@ public class ChannelSettings {
     private boolean maxTrigger;
     private float minValue;
     private float maxValue;
+    private String bgColor;
 
     public ChannelSettings() {
         this.fieldNr = 1;
@@ -16,23 +17,7 @@ public class ChannelSettings {
         this.maxTrigger = false;
         this.minValue = 0.0f;
         this.maxValue = 0.0f;
-    }
-
-    public ChannelSettings(Credentials credentials, int fieldNr, int refreshTime) {
-        this();
-        this.credentials = credentials;
-        this.fieldNr = fieldNr;
-        this.refreshTime = refreshTime;
-    }
-
-    public ChannelSettings(ChannelSettings channelSettings) {
-        this.credentials = channelSettings.credentials;
-        this.fieldNr = channelSettings.fieldNr;
-        this.refreshTime = channelSettings.refreshTime;
-        this.minTrigger = channelSettings.minTrigger;
-        this.maxTrigger = channelSettings.maxTrigger;
-        this.minValue = channelSettings.minValue;
-        this.maxValue = channelSettings.maxValue;
+        this.bgColor = "#000000";
     }
 
     public Credentials getCredentials() {
@@ -89,6 +74,14 @@ public class ChannelSettings {
 
     public void setMaxValue(float maxValue) {
         this.maxValue = maxValue;
+    }
+
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
     }
 
     @Override

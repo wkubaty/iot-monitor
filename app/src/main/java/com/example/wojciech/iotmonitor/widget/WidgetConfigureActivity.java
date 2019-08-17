@@ -4,10 +4,13 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,18 +18,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.GridView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.wojciech.iotmonitor.ChannelSettingsManager;
+import com.example.wojciech.iotmonitor.Color;
+import com.example.wojciech.iotmonitor.ColorAdapter;
 import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.WidgetConfigureBinding;
 import com.example.wojciech.iotmonitor.model.thingspeak.ChannelSettings;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,7 +43,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     ChannelSettingsManager channelSettingsManager;
     CredentialsRepository credentialsRepository;
-    private ChannelSettings channelSettingsTmp = new ChannelSettings();
+    private ChannelSettings channelSettingsTmp;
     private WidgetConfigureBinding bnd;
 
     public WidgetConfigureActivity() {
@@ -47,9 +55,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         channelSettingsManager = ChannelSettingsManager.getInstance(this);
         credentialsRepository = CredentialsRepository.getInstance(this);
-
         bnd = DataBindingUtil.setContentView(this, R.layout.widget_configure);
-
         setSupportActionBar(bnd.wConfToolbar);
 
         setResult(RESULT_CANCELED);
@@ -62,10 +68,15 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
         }
+        channelSettingsTmp = channelSettingsManager.getChannelSettings(appWidgetId);
+        if (channelSettingsTmp == null) {
+            channelSettingsTmp = new ChannelSettings();
+        }
         configure(appWidgetId);
     }
 
     private void configure(int appWidgetId) {
+        Log.d(TAG, "configure: with appwid: " + appWidgetId);
         ChannelSettingsManager.getInstance(this);
         CredentialsRepository.getInstance(this);
         ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
@@ -73,7 +84,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
             //todo return?
             channelSettings = new ChannelSettings();
         }
-        bnd.setChannelSettings(channelSettings);
+//        bnd.setChannelSettings(channelSettings);
         Set<Credentials> credentialsList = credentialsRepository.getCredentials().getValue();
 
         final List<String> names = credentialsList.stream()
@@ -81,6 +92,9 @@ public class WidgetConfigureActivity extends AppCompatActivity {
                 .collect(Collectors.toList());
         ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.widget_spinner_item, names);
         bnd.wConfChannelsSpinner.setAdapter(namesAdapter);
+        if (channelSettings.getCredentials() != null) {
+            bnd.wConfChannelsSpinner.setSelection(names.indexOf(channelSettings.getCredentials().getName()));
+        }
         bnd.wConfChannelsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -95,10 +109,11 @@ public class WidgetConfigureActivity extends AppCompatActivity {
 
         });
 
-
         ArrayAdapter<Integer> fieldsAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.widget_spinner_item, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8));
 
         bnd.wConfFieldsSpinner.setAdapter(fieldsAdapter);
+
+        bnd.wConfFieldsSpinner.setSelection(channelSettingsTmp.getFieldNr() - 1);
         bnd.wConfFieldsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -112,12 +127,13 @@ public class WidgetConfigureActivity extends AppCompatActivity {
             }
         });
 
+        bnd.wConfMinTrigger.setChecked(channelSettings.isMinTrigger());
+        bnd.wConfMaxTrigger.setChecked(channelSettings.isMaxTrigger());
         CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
             channelSettingsTmp.setMinTrigger(bnd.wConfMinTrigger.isChecked());
             channelSettingsTmp.setMaxTrigger(bnd.wConfMaxTrigger.isChecked());
         };
-
-
+        bnd.wConfMinTrigger.setOnCheckedChangeListener(onCheckedChangeListener);
         bnd.wConfMinTrigger.setOnCheckedChangeListener(onCheckedChangeListener);
         bnd.wConfMaxTrigger.setOnCheckedChangeListener(onCheckedChangeListener);
         TextWatcher textWatcherMin = new TextWatcher() {
@@ -167,10 +183,15 @@ public class WidgetConfigureActivity extends AppCompatActivity {
 
             }
         };
+        bnd.setColorButton.setBackground(new ColorDrawable(android.graphics.Color.parseColor(channelSettingsTmp.getBgColor())));
 
+        bnd.wConfMinValue.setText(String.format(Locale.ENGLISH, "%.1f", channelSettings.getMinValue()));
+        bnd.wConfMaxValue.setText(String.format(Locale.ENGLISH, "%.1f", channelSettings.getMaxValue()));
         bnd.wConfMinValue.addTextChangedListener(textWatcherMin);
         bnd.wConfMaxValue.addTextChangedListener(textWatcherMax);
 
+        bnd.wConfRefreshTimeValue.setText(String.format("%s min", channelSettings.getRefreshTime()));
+        bnd.wConfRefreshTimeSeekbar.setProgress(channelSettings.getRefreshTime());
         bnd.wConfRefreshTimeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -191,7 +212,11 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     }
 
     private boolean ifMinValueIsLessOrEqualMaxValue() {
-        return Float.valueOf(bnd.wConfMinValue.getText().toString()) <= Float.valueOf(bnd.wConfMaxValue.getText().toString());
+        try {
+            return Float.valueOf(bnd.wConfMinValue.getText().toString()) <= Float.valueOf(bnd.wConfMaxValue.getText().toString());
+        } catch (NumberFormatException e) {
+            return true;
+        }
     }
 
 
@@ -230,4 +255,37 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         }
     }
 
+    public void setColor(View view) {
+        AlertDialog dialog = new myCustomAlertDialog(this);
+        dialog.show();
+    }
+
+    private class myCustomAlertDialog extends AlertDialog {
+
+        protected myCustomAlertDialog(Context context) {
+            super(context);
+
+            String[] colors = context.getResources().getStringArray(R.array.colors);
+            ArrayList<Color> cols = new ArrayList<>();
+            Arrays.stream(colors).forEach(c -> cols.add(new Color(c)));
+            ColorAdapter colorAdapter = new ColorAdapter(context, cols);
+
+            setTitle("Choose a color");
+            final View customLayout = getLayoutInflater().inflate(R.layout.color_list, null);
+            GridView gridView = customLayout.findViewById(R.id.color_list_view);
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d(TAG, "onItemClick: position: " + position);
+                    channelSettingsTmp.setBgColor(cols.get(position).getValue());
+                    bnd.setColorButton.setBackground(new ColorDrawable(android.graphics.Color.parseColor(channelSettingsTmp.getBgColor())));
+                    dismiss();
+                }
+            });
+            gridView.setAdapter(colorAdapter);
+            setView(customLayout);
+
+        }
+
+    }
 }

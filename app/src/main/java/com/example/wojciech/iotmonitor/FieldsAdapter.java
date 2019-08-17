@@ -52,7 +52,7 @@ public class FieldsAdapter extends RecyclerView.Adapter<FieldsAdapter.ViewHolder
         }
 
         public void bind(String url, int i) {
-            binding.setTitle(String.format(Locale.ENGLISH,"Field %d Chart", i+1));
+            binding.setTitle(String.format(Locale.ENGLISH, "Field %d Chart", i + 1));
             binding.webview.getSettings().setJavaScriptEnabled(true);
             binding.webview.loadUrl(url);
 
