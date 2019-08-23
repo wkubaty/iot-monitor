@@ -42,15 +42,21 @@
             android:layout_gravity="center"
             android:visibility="@{viewmodel.isLoading &amp;&amp; !viewmodel.isChannelListEmpty()? View.VISIBLE : View.GONE}" />
 
-        <ExpandableListView
-            android:id="@+id/expandableListView"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/main_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="0.5dp"
-            android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
-            android:visibility="@{viewmodel.isLoading ? View.GONE : View.VISIBLE}"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <ExpandableListView
+                android:id="@+id/expandableListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@android:color/darker_gray"
+                android:dividerHeight="0.5dp"
+                android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
+                android:visibility="@{viewmodel.isLoading ? View.GONE : View.VISIBLE}" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
 
         <TextView

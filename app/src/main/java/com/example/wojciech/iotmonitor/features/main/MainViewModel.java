@@ -55,7 +55,7 @@ public class MainViewModel extends AndroidViewModel {
         isChannelListEmpty.setValue(credentialsLive.getValue().isEmpty());
     }
 
-    public void addChannels(List<Credentials> credentials) {
+    public void fetchChannelsData(List<Credentials> credentials) {
         for (Credentials c : credentials) {
             RequestManager.getInstance().requestFeed(c, getApplication().getApplicationContext(), 1, new VolleyCallback() {
                 @Override

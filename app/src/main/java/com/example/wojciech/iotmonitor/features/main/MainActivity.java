@@ -3,7 +3,6 @@ package com.example.wojciech.iotmonitor.features.main;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
                 credentials.clear();
                 credentials.addAll(creds);
                 credentials.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
-                viewModel.addChannels(credentials);
+                viewModel.fetchChannelsData(credentials);
 
                 viewModel.getExpandableListDetailLiveData().observe(MainActivity.this, new Observer<HashMap<String, List<FieldValueListItem>>>() {
                     @Override
@@ -78,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
 
                 viewModel.credentialsListChanged();
             }
+        });
+        bnd.mainRefreshLayout.setOnRefreshListener(() -> {
+            viewModel.fetchChannelsData(credentials);
+            bnd.mainRefreshLayout.setRefreshing(false);
         });
     }
 
