@@ -1,7 +1,6 @@
 package com.example.wojciech.iotmonitor.features.channel.webviews;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 
@@ -25,8 +24,6 @@ public class HourWebView extends AbstractWebView {
         int offset = tz.getRawOffset();
 
         String timeZone = String.format(Locale.ENGLISH, "%s%02d.%02d", offset >= 0 ? "+" : "-", offset / 3600000, (offset / 60000) % 60);
-        Log.d(TAG, "getUrl: offset: " + offset);
-        Log.d(TAG, "getUrl: timeZone: " + timeZone);
         Uri.Builder builder = getPrebuiltUrl(fieldNr, width, height, density);
         builder.appendQueryParameter("start", getStartDate())
                 .appendQueryParameter("offset", timeZone);

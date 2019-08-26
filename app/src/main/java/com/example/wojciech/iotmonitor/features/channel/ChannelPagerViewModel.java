@@ -11,10 +11,10 @@ import com.example.wojciech.iotmonitor.features.channel.webviews.AbstractWebView
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChannelViewModel extends AndroidViewModel {
+public class ChannelPagerViewModel extends AndroidViewModel {
     private MutableLiveData<List<String>> urls = new MutableLiveData<>();
 
-    public ChannelViewModel(@NonNull Application application) {
+    public ChannelPagerViewModel(@NonNull Application application) {
         super(application);
 
     }

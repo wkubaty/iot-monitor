@@ -33,4 +33,9 @@
     <string name="user_api_key">User API Key</string>
     <string name="isPrivate">Private</string>
     <string name="background_color">Background color</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="hour">HOUR</string>
+    <string name="day">DAY</string>
+    <string name="week">WEEK</string>
+    <string name="month">MONTH</string>
 </resources>
