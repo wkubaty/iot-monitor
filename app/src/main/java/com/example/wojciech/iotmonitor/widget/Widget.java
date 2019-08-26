@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -115,11 +116,18 @@ public class Widget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
         views.setInt(R.id.w_layout, "setBackgroundColor", Color.parseColor(bgColor));
         appWidgetManager.updateAppWidget(appWidgetId, views);
+        views.setViewVisibility(R.id.widget_refreshing_progress_bar, View.VISIBLE);
+        views.setViewVisibility(R.id.widget_refresh_button, View.INVISIBLE);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+
         RequestManager.getInstance().requestFeed(credentials, context, 1, new VolleyCallback() {
             @Override
             public void onSuccess(ThingspeakResponse thingspeakResponse) {
                 Log.d(TAG, "onSuccess: volley response");
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                views.setViewVisibility(R.id.widget_refreshing_progress_bar, View.GONE);
+                views.setViewVisibility(R.id.widget_refresh_button, View.VISIBLE);
+
                 SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                 String formattedDate = df.format(new Date());
                 views.setTextViewText(R.id.widget_last_feed_time, formattedDate);
@@ -158,6 +166,11 @@ public class Widget extends AppWidgetProvider {
             @Override
             public void onError(VolleyError error) {
                 Log.d(TAG, "onError: volley response");
+                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                views.setViewVisibility(R.id.widget_refreshing_progress_bar, View.GONE);
+                views.setViewVisibility(R.id.widget_refresh_button, View.VISIBLE);
+                appWidgetManager.updateAppWidget(appWidgetId, views);
+
             }
 
         });
@@ -196,13 +209,16 @@ public class Widget extends AppWidgetProvider {
         if (extras != null) {
             int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
             if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                if (intent.getAction().equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+                    Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    vib.vibrate(50);
+                }
                 updateWidget(context.getApplicationContext(), appWidgetId);
+
                 setAlarm(context, appWidgetId);
             }
-
         }
+
     }
-
-
 }
 

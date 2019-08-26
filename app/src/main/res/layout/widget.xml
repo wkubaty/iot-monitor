@@ -82,5 +82,17 @@
             android:contentDescription="TODO"
             android:src="@drawable/ic_refresh_white_24dp" />
 
+        <ProgressBar
+            android:id="@+id/widget_refreshing_progress_bar"
+            style="@android:style/Widget.ProgressBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:paddingEnd="@dimen/double_padding"
+            android:paddingBottom="@dimen/double_padding"
+            android:visibility="gone" />
+
+
     </RelativeLayout>
 </layout>
