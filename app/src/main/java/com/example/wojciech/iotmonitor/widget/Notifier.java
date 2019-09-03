@@ -9,8 +9,8 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
-import com.example.wojciech.iotmonitor.ChannelSettingsManager;
 import com.example.wojciech.iotmonitor.R;
+import com.example.wojciech.iotmonitor.WidgetSettingsManager;
 import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 
@@ -23,7 +23,7 @@ public class Notifier {
     public void sendNotification(Context context, int appWidgetId, String contentText) {
         createNotificationChannel(context);
         Intent intent = new Intent(context, ChannelActivity.class);
-        Credentials credentials = ChannelSettingsManager.getInstance(context).getChannelSettings(appWidgetId).getCredentials();
+        Credentials credentials = WidgetSettingsManager.getInstance(context).getChannelSettings(appWidgetId).getCredentials();
 
         intent.putExtra("credentials", credentials);
 

@@ -1,74 +1,121 @@
 package com.example.wojciech.iotmonitor;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
+import android.os.AsyncTask;
 
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
-import com.example.wojciech.iotmonitor.prefs.SharedPrefsManager;
-import com.google.gson.reflect.TypeToken;
+import com.example.wojciech.iotmonitor.model.thingspeak.CredentialsDao;
+import com.example.wojciech.iotmonitor.model.thingspeak.IotDatabase;
 
-import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class CredentialsRepository {
 
-    private static final String CREDENTIALS_PREFS_KEY = "credentials";
-    private static CredentialsRepository uniqueInstance;
-    private MutableLiveData<Set<Credentials>> credentialsLive;
-    private SharedPrefsManager sharedPrefsManager;
+    private CredentialsDao credentialsDao;
+    private LiveData<List<Credentials>> credentials;
 
-    private CredentialsRepository(Context context) {
-        sharedPrefsManager = SharedPrefsManager.getInstance(context);
-        Type type = new TypeToken<HashSet<Credentials>>() {
-        }.getType();
-        Set<Credentials> credentials = sharedPrefsManager.getCollection(CREDENTIALS_PREFS_KEY, type);
 
-        if (credentials == null) {
-            credentials = new HashSet<>();
+    public CredentialsRepository(Application application) {
+        IotDatabase database = IotDatabase.getInstance(application);
+        credentialsDao = database.credentialsDao();
+        credentials = credentialsDao.getAllCredentials();
+    }
+
+    public void insert(Credentials credentials) {
+        new InsertTask(credentialsDao).execute(credentials);
+    }
+
+    public void update(Credentials credentials) {
+        new UpdateTask(credentialsDao).execute(credentials);
+    }
+
+    public void delete(Credentials credentials) {
+        new DeleteTask(credentialsDao).execute(credentials);
+    }
+
+    public void deleteById(int id) {
+        new DeleteByIdTask(credentialsDao).execute(id);
+    }
+
+
+    public LiveData<List<Credentials>> getCredentials() {
+        return credentials;
+    }
+
+    public void deleteAllCredentials() {
+        new DeleteAllTask(credentialsDao).execute();
+    }
+
+
+    private static class InsertTask extends AsyncTask<Credentials, Void, Void> {
+        private static final String TAG = InsertTask.class.getSimpleName();
+        private CredentialsDao credentialsDao;
+
+        public InsertTask(CredentialsDao credentialsDao) {
+            this.credentialsDao = credentialsDao;
         }
-        credentialsLive = new MutableLiveData<>();
-        credentialsLive.setValue(credentials);
-    }
 
-    public static CredentialsRepository getInstance(Context context) {
-        if (context == null) {
-            throw new NullPointerException("Provided application context is null");
+        @Override
+        protected Void doInBackground(Credentials... credentialsEntities) {
+            credentialsDao.insert(credentialsEntities[0]);
+            return null;
         }
-        if (uniqueInstance == null) {
-            synchronized (CredentialsRepository.class) {
-                if (uniqueInstance == null) {
-                    uniqueInstance = new CredentialsRepository(context);
-                }
-            }
+    }
+
+    private static class UpdateTask extends AsyncTask<Credentials, Void, Void> {
+        private CredentialsDao credentialsDao;
+
+        public UpdateTask(CredentialsDao credentialsDao) {
+            this.credentialsDao = credentialsDao;
         }
-        return uniqueInstance;
-    }
 
-    public void addCredentials(Credentials creds) {
-        Set<Credentials> credentials = credentialsLive.getValue();
-        removeCredentials(creds.getId());
-        credentials.add(creds);
-        sharedPrefsManager.setCollection(CREDENTIALS_PREFS_KEY, credentials);
-        credentialsLive.setValue(credentials);
-    }
-
-    public LiveData<Set<Credentials>> getCredentials() {
-        return credentialsLive;
-    }
-
-    public void removeCredentials(int id) {
-        Set<Credentials> credentials = credentialsLive.getValue();
-        Credentials credentialsToRemove = credentials.stream()
-                .filter(c -> c.getId() == id)
-                .findFirst().orElse(null);
-        if (credentialsToRemove != null) {
-            credentials.remove(credentialsToRemove);
-            sharedPrefsManager.setCollection(CREDENTIALS_PREFS_KEY, credentials);
+        @Override
+        protected Void doInBackground(Credentials... credentialsEntities) {
+            credentialsDao.update(credentialsEntities[0]);
+            return null;
         }
-        credentialsLive.setValue(credentials);
     }
 
+    private static class DeleteTask extends AsyncTask<Credentials, Void, Void> {
+        private CredentialsDao credentialsDao;
 
+        public DeleteTask(CredentialsDao credentialsDao) {
+            this.credentialsDao = credentialsDao;
+        }
+
+        @Override
+        protected Void doInBackground(Credentials... credentialsEntities) {
+            credentialsDao.delete(credentialsEntities[0]);
+            return null;
+        }
+    }
+
+    private static class DeleteAllTask extends AsyncTask<Void, Void, Void> {
+        private CredentialsDao credentialsDao;
+
+        public DeleteAllTask(CredentialsDao credentialsDao) {
+            this.credentialsDao = credentialsDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            credentialsDao.deleteAllCredentials();
+            return null;
+        }
+    }
+
+    private static class DeleteByIdTask extends AsyncTask<Integer, Void, Void> {
+        private CredentialsDao credentialsDao;
+
+        public DeleteByIdTask(CredentialsDao credentialsDao) {
+            this.credentialsDao = credentialsDao;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            credentialsDao.deleteByChannelId(integers[0]);
+            return null;
+        }
+    }
 }

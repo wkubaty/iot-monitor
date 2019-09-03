@@ -4,6 +4,8 @@ import android.net.Uri;
 
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 
+//import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
+
 public class MonthWebView extends AbstractWebView {
 
     public MonthWebView(Credentials credentials) {

@@ -41,6 +41,7 @@ public class SharedPrefsManager {
     public <C> void setCollection(String key, C dataCollection) {
         SharedPreferences.Editor editor = prefs.edit();
         String value = createJSONStringFromObject(dataCollection);
+        Log.d(TAG, "setCollection: value:" + value);
         editor.putString(key, value);
         editor.apply();
     }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.wojciech.iotmonitor.features.main.FieldSettingsDialogViewModel" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/padding"
+                android:text="@string/set_triggers"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_size_h2" />
+
+            <CheckBox
+                android:id="@+id/w_conf_min_trigger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/min_value"
+                android:checked="@{viewModel.fieldSettingsLive.minTrigger}" />
+
+            <EditText
+                android:id="@+id/w_conf_min_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:text="@{String.valueOf(viewModel.fieldSettingsLive.minValue)}" />
+
+
+            <CheckBox
+                android:id="@+id/w_conf_max_trigger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/max_value"
+                android:checked="@{viewModel.fieldSettingsLive.maxTrigger}" />
+
+
+            <EditText
+                android:id="@+id/w_conf_max_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:text="@{String.valueOf(viewModel.fieldSettingsLive.maxValue)}" />
+
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+</layout>

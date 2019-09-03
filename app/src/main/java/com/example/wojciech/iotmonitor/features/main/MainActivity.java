@@ -13,22 +13,20 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.wojciech.iotmonitor.ChannelsAdapter;
-import com.example.wojciech.iotmonitor.CredentialsRepository;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.ActivityMainBinding;
+import com.example.wojciech.iotmonitor.databinding.DialogFieldSettingsBinding;
 import com.example.wojciech.iotmonitor.features.adding.ui.AddChannelActivity;
 import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
+import com.example.wojciech.iotmonitor.model.thingspeak.FieldSettings;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements ChannelsAdapter.AdapterOnClickListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    private CredentialsRepository credentialsRepository;
     private MainViewModel viewModel;
     private List<Credentials> credentials = new ArrayList<>();
     private ActivityMainBinding bnd;
@@ -40,8 +38,6 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
         super.onCreate(savedInstanceState);
         bnd = DataBindingUtil.setContentView(this, R.layout.activity_main);
         bnd.setLifecycleOwner(this);
-        credentialsRepository = CredentialsRepository.getInstance(this);
-
         initViewModel();
     }
 
@@ -50,34 +46,44 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
         viewModel.init();
         bnd.setLifecycleOwner(this);
         bnd.setViewmodel(viewModel);
-        viewModel.getCredentials().observe(this, new Observer<Set<Credentials>>() {
+
+        viewModel.getCredentialsLive().observe(this, creds -> {
+            credentials = creds;
+            viewModel.credentialsListChanged();
+            viewModel.fetchChannelsData(creds);
+        });
+
+        viewModel.getFieldSettingsLive().observe(this, new Observer<List<FieldSettings>>() {
             @Override
-            public void onChanged(@Nullable Set<Credentials> creds) {
-                credentials.clear();
-                credentials.addAll(creds);
-                credentials.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
-                viewModel.fetchChannelsData(credentials);
-
-                viewModel.getExpandableListDetailLiveData().observe(MainActivity.this, new Observer<HashMap<String, List<FieldValueListItem>>>() {
-                    @Override
-                    public void onChanged(@Nullable HashMap<String, List<FieldValueListItem>> stringListHashMap) {
-                        if (stringListHashMap != null) {
-                            expandableListTitle = new ArrayList<>(stringListHashMap.keySet());
-                            expandableListTitle.sort(String::compareTo);
-                        }
-
-                        expandableListAdapter = new CustomExpandableListAdapter(MainActivity.this, expandableListTitle, stringListHashMap, credentials);
-                        bnd.expandableListView.setAdapter(expandableListAdapter);
-                        bnd.expandableListView.setOnGroupExpandListener(groupPosition -> {
-                        });
-
-                    }
-
-                });
-
-                viewModel.credentialsListChanged();
+            public void onChanged(@Nullable List<FieldSettings> fieldSettings) {
             }
         });
+
+        viewModel.getExpandableListDetailLiveData().observe(this, stringListHashMap -> {
+            if (stringListHashMap != null) {
+                expandableListTitle = new ArrayList<>(stringListHashMap.keySet());
+                expandableListTitle.sort(String::compareTo);
+            }
+            expandableListAdapter = new CustomExpandableListAdapter(MainActivity.this, expandableListTitle, stringListHashMap, credentials);
+            bnd.expandableListView.setAdapter(expandableListAdapter);
+            bnd.expandableListView.setOnGroupExpandListener(groupPosition -> {
+            });
+
+            bnd.expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+
+                FieldSettingsDialogViewModel fieldSettingsDialogViewModel = ViewModelProviders.of(MainActivity.this).get(FieldSettingsDialogViewModel.class);
+                DialogFieldSettingsBinding dialogBnd = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialog_field_settings, parent, false);
+                dialogBnd.setLifecycleOwner(MainActivity.this);
+                FieldSettingsDialog fieldSettingsDialog = new FieldSettingsDialog(MainActivity.this, dialogBnd, viewModel);
+                int channelId = credentials.get(groupPosition).getId();
+                FieldSettings settings = viewModel.getChannelFieldSettingsByChannelIdAndField(channelId, childPosition + 1);
+                fieldSettingsDialogViewModel.init(settings);
+                dialogBnd.setViewModel(fieldSettingsDialogViewModel);
+                fieldSettingsDialog.display(settings);
+                return false;
+            });
+        });
+
         bnd.mainRefreshLayout.setOnRefreshListener(() -> {
             viewModel.fetchChannelsData(credentials);
             bnd.mainRefreshLayout.setRefreshing(false);
@@ -112,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
 
 
     private void deleteChannel(int id) {
-        credentialsRepository.removeCredentials(id);
+        viewModel.deleteByChannelId(id);
 
     }
 
@@ -126,18 +132,15 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
     @Override
     public boolean onChannelLongClick(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setCancelable(true);
-        builder.setMessage("Are you sure you want to delete this field?");
-        builder.setPositiveButton(R.string.label_yes, (dialog, which) -> {
-            deleteChannel(credentials.get(position).getId());
-            dialog.cancel();
-        });
-        builder.setNegativeButton(R.string.label_cancel, (dialog, which) -> {
-            dialog.cancel();
-
-        });
+                .setCancelable(true)
+                .setMessage("Are you sure you want to delete this field?")
+                .setPositiveButton(R.string.label_yes, (dialog, which) -> {
+                    deleteChannel(credentials.get(position).getId());
+                    dialog.cancel();
+                }).setNegativeButton(R.string.label_cancel, (dialog, which) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
         return true;
     }
+
 }

@@ -14,6 +14,7 @@ import com.example.wojciech.iotmonitor.features.adding.IChannelProvider;
 import com.example.wojciech.iotmonitor.features.adding.adapter.SectionsPagerAdapter;
 import com.example.wojciech.iotmonitor.features.adding.viewmodel.AddChannelViewModel;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
+import com.example.wojciech.iotmonitor.model.thingspeak.FieldSettings;
 import com.example.wojciech.iotmonitor.model.thingspeak.ThingspeakResponse;
 import com.example.wojciech.iotmonitor.net.RequestManager;
 import com.example.wojciech.iotmonitor.net.VolleyCallback;
@@ -51,6 +52,10 @@ public class AddChannelActivity extends AppCompatActivity implements IChannelPro
                 @Override
                 public void onSuccess(ThingspeakResponse thingspeakResponse) {
                     credentials.setName(thingspeakResponse.getChannel().getName());
+
+                    for (int i = 0; i < 8; i++) {
+                        viewModel.addFieldSettings(new FieldSettings(credentials.getId(), i + 1));
+                    }
                     viewModel.addCredentials(credentials);
                     setResult(RESULT_OK);
                     finish();

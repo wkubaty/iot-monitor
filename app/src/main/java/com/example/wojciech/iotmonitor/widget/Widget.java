@@ -13,8 +13,8 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import com.android.volley.VolleyError;
-import com.example.wojciech.iotmonitor.ChannelSettingsManager;
 import com.example.wojciech.iotmonitor.R;
+import com.example.wojciech.iotmonitor.WidgetSettingsManager;
 import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.ChannelSettings;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
@@ -40,9 +40,9 @@ public class Widget extends AppWidgetProvider {
 
         setRefreshButtonOnClick(context, appWidgetId, views);
         setAlarm(context, appWidgetId);
-        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
+        WidgetSettingsManager widgetSettingsManager = WidgetSettingsManager.getInstance(context);
 
-        ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
+        ChannelSettings channelSettings = widgetSettingsManager.getChannelSettings(appWidgetId);
         if (channelSettings == null) {
             return;
         }
@@ -62,9 +62,9 @@ public class Widget extends AppWidgetProvider {
     private static void setAlarm(Context context, int appWidgetId) {
         Alarm alarm = new Alarm();
         alarm.cancelAlarm(context);
-        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
+        WidgetSettingsManager widgetSettingsManager = WidgetSettingsManager.getInstance(context);
 
-        int refreshTime = channelSettingsManager.getChannelSettings(appWidgetId).getRefreshTime();
+        int refreshTime = widgetSettingsManager.getChannelSettings(appWidgetId).getRefreshTime();
         Log.d(TAG, "setAlarm: " + refreshTime + " mins");
         alarm.setAlarm(context, appWidgetId, refreshTime);
 
@@ -72,9 +72,9 @@ public class Widget extends AppWidgetProvider {
 
     private static void setValueButtonOnClick(Context context, int appWidgetId, RemoteViews views) {
         Intent openChannelIntent = new Intent(context, ChannelActivity.class);
-        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
+        WidgetSettingsManager widgetSettingsManager = WidgetSettingsManager.getInstance(context);
 
-        ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
+        ChannelSettings channelSettings = widgetSettingsManager.getChannelSettings(appWidgetId);
         openChannelIntent.putExtra("credentials", channelSettings.getCredentials());
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 2, openChannelIntent, 0);
         views.setOnClickPendingIntent(R.id.widget_value_button, pendingIntent);
@@ -97,9 +97,9 @@ public class Widget extends AppWidgetProvider {
     }
 
     private static void updateWidget(final Context context, int appWidgetId) {
-        ChannelSettingsManager channelSettingsManager = ChannelSettingsManager.getInstance(context);
+        WidgetSettingsManager widgetSettingsManager = WidgetSettingsManager.getInstance(context);
 
-        ChannelSettings channelSettings = channelSettingsManager.getChannelSettings(appWidgetId);
+        ChannelSettings channelSettings = widgetSettingsManager.getChannelSettings(appWidgetId);
         if (channelSettings == null) {
             return;
         }
@@ -187,7 +187,7 @@ public class Widget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
-            ChannelSettingsManager.getInstance(context).removeChannelSettings(appWidgetId);
+            WidgetSettingsManager.getInstance(context).removeChannelSettings(appWidgetId);
         }
     }
 

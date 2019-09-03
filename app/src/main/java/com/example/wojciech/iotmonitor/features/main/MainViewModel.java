@@ -9,7 +9,9 @@ import android.util.Log;
 
 import com.android.volley.VolleyError;
 import com.example.wojciech.iotmonitor.CredentialsRepository;
+import com.example.wojciech.iotmonitor.FieldSettingsRepository;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
+import com.example.wojciech.iotmonitor.model.thingspeak.FieldSettings;
 import com.example.wojciech.iotmonitor.model.thingspeak.ThingspeakResponse;
 import com.example.wojciech.iotmonitor.net.RequestManager;
 import com.example.wojciech.iotmonitor.net.VolleyCallback;
@@ -17,20 +19,24 @@ import com.example.wojciech.iotmonitor.net.VolleyCallback;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class MainViewModel extends AndroidViewModel {
     private static final String TAG = MainViewModel.class.getSimpleName();
-    private LiveData<Set<Credentials>> credentialsLive;
+    private LiveData<List<Credentials>> credentialsLive;
+    private LiveData<List<FieldSettings>> fieldSettingsLive;
     private CredentialsRepository credentialsRepository;
+    private FieldSettingsRepository fieldSettingsRepository;
+
     private MutableLiveData<Boolean> isChannelListEmpty = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<HashMap<String, List<FieldValueListItem>>> expandableListDetailLiveData;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-        credentialsRepository = CredentialsRepository.getInstance(application.getApplicationContext());
+        credentialsRepository = new CredentialsRepository(application);
+        fieldSettingsRepository = new FieldSettingsRepository(getApplication());
         credentialsLive = credentialsRepository.getCredentials();
+        fieldSettingsLive = fieldSettingsRepository.getFieldSettings();
         expandableListDetailLiveData = new MutableLiveData<>();
     }
 
@@ -39,8 +45,12 @@ public class MainViewModel extends AndroidViewModel {
         isLoading.postValue(true);
     }
 
-    public LiveData<Set<Credentials>> getCredentials() {
+    public LiveData<List<Credentials>> getCredentialsLive() {
         return credentialsLive;
+    }
+
+    public LiveData<List<FieldSettings>> getFieldSettingsLive() {
+        return fieldSettingsLive;
     }
 
     public LiveData<Boolean> isChannelListEmpty() {
@@ -48,7 +58,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void credentialsListChanged() {
-        Set<Credentials> credentials = credentialsLive.getValue();
+        List<Credentials> credentials = credentialsLive.getValue();
         if (credentials == null) {
             isChannelListEmpty.setValue(true);
         }
@@ -101,4 +111,19 @@ public class MainViewModel extends AndroidViewModel {
     }
 
 
+    public List<FieldSettings> getChannelFieldSettingsByChannelId(int channelId) {
+        return fieldSettingsRepository.getChannelFieldSettingsByChannelId(channelId);
+    }
+
+    public void updateFieldSetting(FieldSettings fieldSettings1) {
+        fieldSettingsRepository.update(fieldSettings1);
+    }
+
+    public void deleteByChannelId(int channelId) {
+        credentialsRepository.deleteById(channelId);
+    }
+
+    public FieldSettings getChannelFieldSettingsByChannelIdAndField(int channelId, int field) {
+        return fieldSettingsRepository.getChannelFieldSettingsByChannelIdAndField(channelId, field);
+    }
 }
