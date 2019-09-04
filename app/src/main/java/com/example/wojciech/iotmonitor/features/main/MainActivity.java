@@ -15,7 +15,6 @@ import android.view.View;
 import com.example.wojciech.iotmonitor.ChannelsAdapter;
 import com.example.wojciech.iotmonitor.R;
 import com.example.wojciech.iotmonitor.databinding.ActivityMainBinding;
-import com.example.wojciech.iotmonitor.databinding.DialogFieldSettingsBinding;
 import com.example.wojciech.iotmonitor.features.adding.ui.AddChannelActivity;
 import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
@@ -68,18 +67,25 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
             bnd.expandableListView.setAdapter(expandableListAdapter);
             bnd.expandableListView.setOnGroupExpandListener(groupPosition -> {
             });
-
             bnd.expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
 
-                FieldSettingsDialogViewModel fieldSettingsDialogViewModel = ViewModelProviders.of(MainActivity.this).get(FieldSettingsDialogViewModel.class);
-                DialogFieldSettingsBinding dialogBnd = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialog_field_settings, parent, false);
-                dialogBnd.setLifecycleOwner(MainActivity.this);
-                FieldSettingsDialog fieldSettingsDialog = new FieldSettingsDialog(MainActivity.this, dialogBnd, viewModel);
+
                 int channelId = credentials.get(groupPosition).getId();
                 FieldSettings settings = viewModel.getChannelFieldSettingsByChannelIdAndField(channelId, childPosition + 1);
-                fieldSettingsDialogViewModel.init(settings);
-                dialogBnd.setViewModel(fieldSettingsDialogViewModel);
-                fieldSettingsDialog.display(settings);
+                FieldSettingsDialogFragment fieldSettingsDialogFragment = FieldSettingsDialogFragment.newInstance(settings);
+
+                fieldSettingsDialogFragment.setOnYesNoClick(new FieldSettingsDialogFragment.OnYesNoClick() {
+                    @Override
+                    public void onPositiveClicked(FieldSettings fieldSettingsTmp) {
+                        viewModel.updateFieldSetting(fieldSettingsTmp);
+                    }
+
+                    @Override
+                    public void onNegativeClicked() {
+
+                    }
+                });
+                fieldSettingsDialogFragment.show(getSupportFragmentManager(), "triggers_dialog");
                 return false;
             });
         });
@@ -142,5 +148,4 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
         alert.show();
         return true;
     }
-
 }

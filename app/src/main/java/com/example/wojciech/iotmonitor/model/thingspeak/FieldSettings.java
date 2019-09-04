@@ -3,9 +3,11 @@ package com.example.wojciech.iotmonitor.model.thingspeak;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 @Entity(tableName = "field_settings")
-public class FieldSettings {
+public class FieldSettings implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -100,4 +102,44 @@ public class FieldSettings {
                 ", bgColor='" + bgColor + '\'' +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeInt(this.channelId);
+        dest.writeInt(this.field);
+        dest.writeByte(this.minTrigger ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.maxTrigger ? (byte) 1 : (byte) 0);
+        dest.writeFloat(this.minValue);
+        dest.writeFloat(this.maxValue);
+        dest.writeString(this.bgColor);
+    }
+
+    protected FieldSettings(Parcel in) {
+        this.id = in.readInt();
+        this.channelId = in.readInt();
+        this.field = in.readInt();
+        this.minTrigger = in.readByte() != 0;
+        this.maxTrigger = in.readByte() != 0;
+        this.minValue = in.readFloat();
+        this.maxValue = in.readFloat();
+        this.bgColor = in.readString();
+    }
+
+    public static final Creator<FieldSettings> CREATOR = new Creator<FieldSettings>() {
+        @Override
+        public FieldSettings createFromParcel(Parcel source) {
+            return new FieldSettings(source);
+        }
+
+        @Override
+        public FieldSettings[] newArray(int size) {
+            return new FieldSettings[size];
+        }
+    };
 }
