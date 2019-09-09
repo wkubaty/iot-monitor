@@ -4,7 +4,7 @@
 
     <data>
 
-        <import type="com.example.wojciech.iotmonitor.utils.Converter"/>
+        <import type="com.example.wojciech.iotmonitor.utils.Converter" />
 
         <variable
             name="viewModel"

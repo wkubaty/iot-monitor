@@ -10,14 +10,14 @@
         android:padding="@dimen/widget_margin">
 
         <TextView
-            android:id="@+id/widget_field_title"
+            android:id="@+id/tv_field_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TITLE"
             android:textColor="#ffffff" />
 
         <ImageButton
-            android:id="@+id/widget_settings_button"
+            android:id="@+id/ibtn_settings"
             style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,10 +27,10 @@
             android:src="@drawable/ic_dehaze_white_24dp" />
 
         <Button
-            android:id="@+id/widget_value_button"
+            android:id="@+id/btn_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/widget_field_title"
+            android:layout_below="@+id/tv_field_title"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/text_margin"
@@ -43,26 +43,26 @@
             android:textStyle="bold|italic" />
 
         <ImageView
-            android:id="@+id/bell_top"
+            android:id="@+id/iv_bell_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/widget_settings_button"
+            android:layout_below="@+id/ibtn_settings"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="0dp"
             android:contentDescription="TODO"
             android:src="@drawable/bell" />
 
         <ImageView
-            android:id="@+id/bell_bottom"
+            android:id="@+id/iv_bell_bottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/widget_refresh_button"
+            android:layout_above="@id/btn_refresh"
             android:layout_alignParentEnd="true"
             android:contentDescription="TODO"
             android:src="@drawable/bell" />
 
         <TextView
-            android:id="@+id/widget_last_feed_time"
+            android:id="@+id/tv_last_feed_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -72,7 +72,7 @@
 
 
         <ImageButton
-            android:id="@+id/widget_refresh_button"
+            android:id="@+id/btn_refresh"
             style="@style/Base.Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
             android:src="@drawable/ic_refresh_white_24dp" />
 
         <ProgressBar
-            android:id="@+id/widget_refreshing_progress_bar"
+            android:id="@+id/pb_refreshing"
             style="@android:style/Widget.ProgressBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

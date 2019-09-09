@@ -77,7 +77,7 @@ public class Widget extends AppWidgetProvider {
         ChannelSettings channelSettings = widgetSettingsManager.getChannelSettings(appWidgetId);
         openChannelIntent.putExtra("credentials", channelSettings.getCredentials());
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 2, openChannelIntent, 0);
-        views.setOnClickPendingIntent(R.id.widget_value_button, pendingIntent);
+        views.setOnClickPendingIntent(R.id.btn_value, pendingIntent);
     }
 
     private static void setSettingsButtonOnClick(Context context, int appWidgetId, RemoteViews views) {
@@ -85,7 +85,7 @@ public class Widget extends AppWidgetProvider {
         widgetConfigureIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         PendingIntent widgetConfigurePendingIntent = PendingIntent.getActivity(context, 30, widgetConfigureIntent, 0);
 
-        views.setOnClickPendingIntent(R.id.widget_settings_button, widgetConfigurePendingIntent);
+        views.setOnClickPendingIntent(R.id.ibtn_settings, widgetConfigurePendingIntent);
     }
 
     private static void setRefreshButtonOnClick(Context context, int appWidgetId, RemoteViews views) {
@@ -93,7 +93,7 @@ public class Widget extends AppWidgetProvider {
         widgetRefreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         PendingIntent widgetRefreshPendingIntent = PendingIntent.getBroadcast(context, 4, widgetRefreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        views.setOnClickPendingIntent(R.id.widget_refresh_button, widgetRefreshPendingIntent);
+        views.setOnClickPendingIntent(R.id.btn_refresh, widgetRefreshPendingIntent);
     }
 
     private static void updateWidget(final Context context, int appWidgetId) {
@@ -116,8 +116,8 @@ public class Widget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
         views.setInt(R.id.w_layout, "setBackgroundColor", Color.parseColor(bgColor));
         appWidgetManager.updateAppWidget(appWidgetId, views);
-        views.setViewVisibility(R.id.widget_refreshing_progress_bar, View.VISIBLE);
-        views.setViewVisibility(R.id.widget_refresh_button, View.INVISIBLE);
+        views.setViewVisibility(R.id.pb_refreshing, View.VISIBLE);
+        views.setViewVisibility(R.id.btn_refresh, View.INVISIBLE);
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
         RequestManager.getInstance().requestFeed(credentials, context, 1, new VolleyCallback() {
@@ -125,40 +125,40 @@ public class Widget extends AppWidgetProvider {
             public void onSuccess(ThingspeakResponse thingspeakResponse) {
                 Log.d(TAG, "onSuccess: volley response");
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-                views.setViewVisibility(R.id.widget_refreshing_progress_bar, View.GONE);
-                views.setViewVisibility(R.id.widget_refresh_button, View.VISIBLE);
+                views.setViewVisibility(R.id.pb_refreshing, View.GONE);
+                views.setViewVisibility(R.id.btn_refresh, View.VISIBLE);
 
                 SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                 String formattedDate = df.format(new Date());
-                views.setTextViewText(R.id.widget_last_feed_time, formattedDate);
-                views.setTextViewText(R.id.widget_field_title, thingspeakResponse.getChannel().getFields()[field - 1]);
+                views.setTextViewText(R.id.tv_last_feed_time, formattedDate);
+                views.setTextViewText(R.id.tv_field_title, thingspeakResponse.getChannel().getFields()[field - 1]);
                 String value = thingspeakResponse.getFeeds()[0].getFields()[field - 1];
                 if (value == null || value.isEmpty()) {
-                    views.setTextViewText(R.id.widget_value_button, "--");
+                    views.setTextViewText(R.id.btn_value, "--");
                     appWidgetManager.updateAppWidget(appWidgetId, views);
                     return;
                 }
-                views.setTextViewText(R.id.widget_value_button, String.format(Locale.US, "%.1f", Float.valueOf(value)));
+                views.setTextViewText(R.id.btn_value, String.format(Locale.US, "%.1f", Float.valueOf(value)));
 
 
                 Notifier notifier = new Notifier();
                 if (maxTrigger) {
                     if (Float.valueOf(value) >= maxValueTrigger) {
-                        views.setImageViewResource(R.id.bell_top, R.drawable.bell_on);
+                        views.setImageViewResource(R.id.iv_bell_top, R.drawable.bell_on);
                         notifier.sendNotification(context, appWidgetId, "Alarm: " + value + " is more than: " + maxValueTrigger);
                     } else {
-                        views.setImageViewResource(R.id.bell_top, R.drawable.bell);
+                        views.setImageViewResource(R.id.iv_bell_top, R.drawable.bell);
                     }
                 } else if (minTrigger) {
                     if (Float.valueOf(value) <= minValueTrigger) {
-                        views.setImageViewResource(R.id.bell_bottom, R.drawable.bell_on);
+                        views.setImageViewResource(R.id.iv_bell_bottom, R.drawable.bell_on);
                         notifier.sendNotification(context, appWidgetId, "Alarm: " + value + " is less than: " + minValueTrigger);
                     } else {
-                        views.setImageViewResource(R.id.bell_bottom, R.drawable.bell);
+                        views.setImageViewResource(R.id.iv_bell_bottom, R.drawable.bell);
                     }
                 } else {
-                    views.setViewVisibility(R.id.bell_top, View.GONE);
-                    views.setViewVisibility(R.id.bell_bottom, View.GONE);
+                    views.setViewVisibility(R.id.iv_bell_top, View.GONE);
+                    views.setViewVisibility(R.id.iv_bell_bottom, View.GONE);
                 }
                 appWidgetManager.updateAppWidget(appWidgetId, views);
             }
@@ -167,8 +167,8 @@ public class Widget extends AppWidgetProvider {
             public void onError(VolleyError error) {
                 Log.d(TAG, "onError: volley response");
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-                views.setViewVisibility(R.id.widget_refreshing_progress_bar, View.GONE);
-                views.setViewVisibility(R.id.widget_refresh_button, View.VISIBLE);
+                views.setViewVisibility(R.id.pb_refreshing, View.GONE);
+                views.setViewVisibility(R.id.btn_refresh, View.VISIBLE);
                 appWidgetManager.updateAppWidget(appWidgetId, views);
 
             }
