@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
                 FieldSettings settings = viewModel.getChannelFieldSettingsByChannelIdAndField(channelId, childPosition + 1);
                 FieldSettingsDialogFragment fieldSettingsDialogFragment = FieldSettingsDialogFragment.newInstance(settings);
 
-                fieldSettingsDialogFragment.setOnYesNoClick(new FieldSettingsDialogFragment.OnYesNoClick() {
+                fieldSettingsDialogFragment.setOnDialogButtonClick(new FieldSettingsDialogFragment.OnDialogButtonClick() {
                     @Override
                     public void onPositiveClicked(FieldSettings fieldSettingsTmp) {
                         viewModel.updateFieldSetting(fieldSettingsTmp);

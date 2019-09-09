@@ -115,8 +115,8 @@ public class MainViewModel extends AndroidViewModel {
         return fieldSettingsRepository.getChannelFieldSettingsByChannelId(channelId);
     }
 
-    public void updateFieldSetting(FieldSettings fieldSettings1) {
-        fieldSettingsRepository.update(fieldSettings1);
+    public void updateFieldSetting(FieldSettings fieldSettings) {
+        fieldSettingsRepository.update(fieldSettings);
     }
 
     public void deleteByChannelId(int channelId) {

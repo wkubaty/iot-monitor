@@ -2,16 +2,16 @@ package com.example.wojciech.iotmonitor.features.main;
 
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.widget.CompoundButton;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.wojciech.iotmonitor.R;
@@ -22,7 +22,7 @@ public class FieldSettingsDialogFragment extends DialogFragment {
 
     private static final String TAG = FieldSettingsDialogFragment.class.getSimpleName();
     private static final String SETTINGS = "settings";
-    private OnYesNoClick onYesNoClick;
+    private OnDialogButtonClick onDialogButtonClick;
 
     public static FieldSettingsDialogFragment newInstance(FieldSettings settings) {
         FieldSettingsDialogFragment frag = new FieldSettingsDialogFragment();
@@ -42,88 +42,58 @@ public class FieldSettingsDialogFragment extends DialogFragment {
         DialogFieldSettingsBinding dialogBnd = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.dialog_field_settings, null, false);
         dialogBnd.setLifecycleOwner(this);
         fieldSettingsDialogViewModel.init(fieldSettings);
+        builder.setTitle("Field settings");
+
+
+        dialogBnd.wConfMinTrigger.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            fieldSettingsDialogViewModel.setTmpMinTrigger(isChecked);
+        });
+
+        dialogBnd.wConfMaxTrigger.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            fieldSettingsDialogViewModel.setTmpMaxTrigger(isChecked);
+        });
+
         dialogBnd.setViewModel(fieldSettingsDialogViewModel);
-        builder.setTitle("Set triggers");
         builder.setView(dialogBnd.getRoot());
 
-        FieldSettings fieldSettingsTmp = new FieldSettings(fieldSettings.getId(), fieldSettings.getChannelId(), fieldSettings.getField());
-
-        dialogBnd.wConfMinTrigger.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                fieldSettingsTmp.setMinTrigger(isChecked);
-            }
-        });
-
-        dialogBnd.wConfMaxTrigger.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                fieldSettingsTmp.setMaxTrigger(isChecked);
-            }
-        });
-
-        TextWatcher textWatcherMin = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (ifMinValueIsLessOrEqualMaxValue(Float.valueOf(dialogBnd.wConfMinValue.getText().toString()), Float.valueOf(dialogBnd.wConfMaxValue.getText().toString()))) {
-                    fieldSettingsTmp.setMinValue(Float.valueOf(s.toString()));
-
-                } else {
-                    Toast.makeText(getContext().getApplicationContext(), "Min value can't be higher than max value.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        };
-
-        TextWatcher textWatcherMax = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    if (ifMinValueIsLessOrEqualMaxValue(Float.valueOf(dialogBnd.wConfMinValue.getText().toString()), Float.valueOf(dialogBnd.wConfMaxValue.getText().toString()))) {
-                        fieldSettingsTmp.setMaxValue(Float.valueOf(s.toString()));
-                    } else {
-                        Toast.makeText(getContext().getApplicationContext(), "Max value can't be lower than min value.", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        };
-        dialogBnd.wConfMinValue.addTextChangedListener(textWatcherMin);
-        dialogBnd.wConfMaxValue.addTextChangedListener(textWatcherMax);
         builder.setPositiveButton("Set", (dialog, which) -> {
-            if (onYesNoClick != null) {
-                onYesNoClick.onPositiveClicked(fieldSettingsTmp);
-                dialog.dismiss();
-            }
+
         });
         builder.setNegativeButton("Cancel", ((dialog, which) -> {
-            onYesNoClick.onNegativeClicked();
+            onDialogButtonClick.onNegativeClicked();
+            builder.setCancelable(true);
+
             dialog.cancel();
         }));
 
-        return builder.create();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        // TODO Do something
+                        if (onDialogButtonClick != null) {
+                            if (ifMinValueIsLessOrEqualMaxValue(Float.valueOf(dialogBnd.wConfMinValue.getText().toString()), Float.valueOf(dialogBnd.wConfMaxValue.getText().toString()))) {
+                                onDialogButtonClick.onPositiveClicked(fieldSettingsDialogViewModel.getFieldSettingsTmpLive().getValue());
+
+                                alertDialog.dismiss();
+                            } else {
+                                Toast.makeText(getContext().getApplicationContext(), "Max value can't be lower than min value.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }
+                });
+            }
+        });
+        return alertDialog;
+
     }
 
     private boolean ifMinValueIsLessOrEqualMaxValue(Float minValue, Float maxValue) {
@@ -134,11 +104,11 @@ public class FieldSettingsDialogFragment extends DialogFragment {
         }
     }
 
-    public void setOnYesNoClick(OnYesNoClick onYesNoClick) {
-        this.onYesNoClick = onYesNoClick;
+    public void setOnDialogButtonClick(OnDialogButtonClick onDialogButtonClick) {
+        this.onDialogButtonClick = onDialogButtonClick;
     }
 
-    public interface OnYesNoClick {
+    public interface OnDialogButtonClick {
         void onPositiveClicked(FieldSettings fieldSettingsTmp);
 
         void onNegativeClicked();

@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="com.example.wojciech.iotmonitor.utils.Converter"/>
+
         <variable
             name="viewModel"
             type="com.example.wojciech.iotmonitor.features.main.FieldSettingsDialogViewModel" />
@@ -17,7 +19,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
@@ -31,7 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/padding"
-                android:text="@string/set_triggers"
+                android:layout_marginTop="@dimen/padding"
+                android:text="@string/triggers"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_size_h2" />
 
@@ -40,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/min_value"
-                android:checked="@{viewModel.fieldSettingsLive.minTrigger}" />
+                android:checked="@{viewModel.fieldSettingsTmpLive.minTrigger}" />
 
             <EditText
                 android:id="@+id/w_conf_min_value"
@@ -48,15 +51,17 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="numberDecimal"
-                android:text="@{String.valueOf(viewModel.fieldSettingsLive.minValue)}" />
+                android:enabled="@{viewModel.fieldSettingsTmpLive.minTrigger}"
+                android:text="@={Converter.floatToString(viewModel.fieldSettingsTmpLive.minValue)}" />
 
 
             <CheckBox
                 android:id="@+id/w_conf_max_trigger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding"
                 android:text="@string/max_value"
-                android:checked="@{viewModel.fieldSettingsLive.maxTrigger}" />
+                android:checked="@{viewModel.fieldSettingsTmpLive.maxTrigger}" />
 
 
             <EditText
@@ -65,7 +70,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="numberDecimal"
-                android:text="@{String.valueOf(viewModel.fieldSettingsLive.maxValue)}" />
+                android:enabled="@{viewModel.fieldSettingsTmpLive.maxTrigger}"
+                android:text="@={Converter.floatToString(viewModel.fieldSettingsTmpLive.maxValue)}" />
 
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>

@@ -5,10 +5,12 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 @Entity(tableName = "field_settings")
-public class FieldSettings implements Parcelable {
+public class FieldSettings implements Parcelable, Cloneable {
 
+    private static final String TAG = FieldSettings.class.getSimpleName();
     @PrimaryKey(autoGenerate = true)
     private int id;
     private int channelId;
@@ -53,10 +55,12 @@ public class FieldSettings implements Parcelable {
     }
 
     public boolean isMaxTrigger() {
+        Log.d(TAG, "isMaxTrigger: ");
         return maxTrigger;
     }
 
     public void setMaxTrigger(boolean maxTrigger) {
+        Log.d(TAG, "setMaxTrigger: ");
         this.maxTrigger = maxTrigger;
     }
 
@@ -142,4 +146,9 @@ public class FieldSettings implements Parcelable {
             return new FieldSettings[size];
         }
     };
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
 }
