@@ -21,7 +21,7 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/channelIdManual"
+                android:id="@+id/et_channel_id_manual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -30,14 +30,14 @@
                 android:text="" />
 
             <CheckBox
-                android:id="@+id/checkboxPrivateManual"
+                android:id="@+id/cb_private_manual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="@string/isPrivate" />
 
             <EditText
-                android:id="@+id/apiKeyManual"
+                android:id="@+id/et_api_key_manual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -47,7 +47,7 @@
                 android:visibility="@{viewmodel.isPrivateLiveData ? View.VISIBLE : View.GONE}" />
 
             <Button
-                android:id="@+id/searchButtonManual"
+                android:id="@+id/btn_search_manual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30sp"

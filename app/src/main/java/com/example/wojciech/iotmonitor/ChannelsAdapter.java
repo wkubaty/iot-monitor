@@ -59,8 +59,8 @@ public class ChannelsAdapter extends RecyclerView.Adapter<ChannelsAdapter.ViewHo
         }
 
         public void bind(Credentials item) {
-            binding.channelNameButton.setOnClickListener(this);
-            binding.channelNameButton.setOnLongClickListener(this);
+            binding.btnChannelName.setOnClickListener(this);
+            binding.btnChannelName.setOnLongClickListener(this);
             binding.setItem(item);
         }
 

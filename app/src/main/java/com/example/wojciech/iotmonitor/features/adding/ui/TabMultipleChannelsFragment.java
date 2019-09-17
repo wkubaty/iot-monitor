@@ -24,8 +24,8 @@ public class TabMultipleChannelsFragment extends Fragment {
         FragmentTabAddMultipleChannelsBinding bnd = DataBindingUtil.inflate(inflater, R.layout.fragment_tab_add_multiple_channels, container, false);
         viewModel = ViewModelProviders.of(this).get(TabMultipleChannelsFragmentViewModel.class);
         viewModel.init((IChannelProvider) getActivity());
-        bnd.searchButtonAuto.setOnClickListener(v -> {
-            viewModel.getChannelsWithUserApiKey(bnd.apiKeyAuto.getText().toString());
+        bnd.btnSearchAuto.setOnClickListener(v -> {
+            viewModel.getChannelsWithUserApiKey(bnd.etApiKeyAuto.getText().toString());
         });
         return bnd.getRoot();
     }

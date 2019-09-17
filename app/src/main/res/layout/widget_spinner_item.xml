@@ -9,5 +9,5 @@
         android:padding="@dimen/padding"
         android:textSize="@dimen/text_size_h2"
         android:theme="@style/CardView.Dark"
-        tools:text="ABC" />
+        tools:text="Item" />
 </layout>

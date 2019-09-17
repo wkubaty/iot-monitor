@@ -2,14 +2,16 @@ package com.example.wojciech.iotmonitor.features.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.TextView;
 
 import com.example.wojciech.iotmonitor.R;
+import com.example.wojciech.iotmonitor.databinding.MainExpandableGroupBinding;
+import com.example.wojciech.iotmonitor.databinding.MainExpandableItemBinding;
 import com.example.wojciech.iotmonitor.features.channel.ChannelActivity;
 import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 
@@ -46,18 +48,13 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int listPosition, final int expandedListPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
         final FieldValueListItem expandedListTextItem = (FieldValueListItem) getChild(listPosition, expandedListPosition);
-        if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) this.context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.main_expandable_item, null);
-        }
-        TextView expandedListTextView = convertView
-                .findViewById(R.id.expandedListItemTitle);
-        expandedListTextView.setText(expandedListTextItem.getField());
-        TextView expandedListTextViewValue = convertView
-                .findViewById(R.id.expandedListItemValue);
-        expandedListTextViewValue.setText(expandedListTextItem.getValue());
-        return convertView;
+        LayoutInflater layoutInflater = (LayoutInflater) this.context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        MainExpandableItemBinding bnd = DataBindingUtil.inflate(layoutInflater, R.layout.main_expandable_item, null, false);
+
+        bnd.tvExpandedListItemTitle.setText(expandedListTextItem.getField());
+        bnd.tvExpandedListItemValue.setText(expandedListTextItem.getValue());
+        return bnd.getRoot();
     }
 
     @Override
@@ -85,15 +82,12 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int listPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         String listTitle = (String) getGroup(listPosition);
-        if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) this.context.
-                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.main_expandable_group, null);
-        }
-        TextView listTitleTextView = convertView.findViewById(R.id.listTitle);
-        listTitleTextView.setTypeface(null, Typeface.BOLD);
-        listTitleTextView.setText(listTitle);
-        convertView.findViewById(R.id.chart_icon).setOnClickListener(v -> {
+        LayoutInflater layoutInflater = (LayoutInflater) this.context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        MainExpandableGroupBinding bnd = DataBindingUtil.inflate(layoutInflater, R.layout.main_expandable_group, null, false);
+        bnd.tvListTitle.setTypeface(null, Typeface.BOLD);
+        bnd.tvListTitle.setText(listTitle);
+        bnd.ivChartIcon.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChannelActivity.class);
             intent.putExtra("credentials", credentials.get(listPosition));
             context.startActivity(intent);

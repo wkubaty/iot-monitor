@@ -81,7 +81,6 @@ public class FieldSettingsDialogFragment extends DialogFragment {
                         if (onDialogButtonClick != null) {
                             if (ifMinValueIsLessOrEqualMaxValue(Float.valueOf(dialogBnd.wConfMinValue.getText().toString()), Float.valueOf(dialogBnd.wConfMaxValue.getText().toString()))) {
                                 onDialogButtonClick.onPositiveClicked(fieldSettingsDialogViewModel.getFieldSettingsTmpLive().getValue());
-
                                 alertDialog.dismiss();
                             } else {
                                 Toast.makeText(getContext().getApplicationContext(), "Max value can't be lower than min value.", Toast.LENGTH_SHORT).show();

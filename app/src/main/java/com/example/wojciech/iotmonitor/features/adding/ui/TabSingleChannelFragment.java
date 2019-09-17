@@ -26,10 +26,10 @@ public class TabSingleChannelFragment extends Fragment {
         viewModel.init((IChannelProvider) getActivity());
         bnd.setViewmodel(viewModel);
         bnd.setLifecycleOwner(this);
-        bnd.searchButtonManual.setOnClickListener(v -> {
-            viewModel.getChannelsWithUserApiKey(Integer.parseInt(bnd.channelIdManual.getText().toString()), bnd.apiKeyManual.getText().toString());
+        bnd.btnSearchManual.setOnClickListener(v -> {
+            viewModel.getChannelsWithUserApiKey(Integer.parseInt(bnd.etChannelIdManual.getText().toString()), bnd.etApiKeyManual.getText().toString());
         });
-        bnd.checkboxPrivateManual.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setPrivateChannel(isChecked));
+        bnd.cbPrivateManual.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setPrivateChannel(isChecked));
         return bnd.getRoot();
     }
 }

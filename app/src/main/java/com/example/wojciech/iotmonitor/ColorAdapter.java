@@ -3,7 +3,6 @@ package com.example.wojciech.iotmonitor;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +31,8 @@ public class ColorAdapter extends ArrayAdapter<Color> implements View.OnClickLis
 
         int position = (Integer) v.getTag();
         Color color = colors.get(position);
-        Log.d(TAG, "onClick: colorrr");
         switch (v.getId()) {
-            case R.id.color_button_item:
+            case R.id.tv_color_item:
                 Snackbar.make(v, "Color" + color.getValue(), Snackbar.LENGTH_LONG)
                         .setAction("No action", null).show();
                 break;
@@ -55,7 +53,7 @@ public class ColorAdapter extends ArrayAdapter<Color> implements View.OnClickLis
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.color_item, parent, false);
-            viewHolder.button = convertView.findViewById(R.id.color_button_item);
+            viewHolder.button = convertView.findViewById(R.id.tv_color_item);
 
             result = convertView;
 
