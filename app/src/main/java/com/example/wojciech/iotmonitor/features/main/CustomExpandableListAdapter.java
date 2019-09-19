@@ -92,7 +92,7 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
             intent.putExtra("credentials", credentials.get(listPosition));
             context.startActivity(intent);
         });
-        return convertView;
+        return bnd.getRoot();
     }
 
     @Override

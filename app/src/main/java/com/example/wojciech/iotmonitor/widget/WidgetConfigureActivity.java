@@ -1,11 +1,13 @@
 package com.example.wojciech.iotmonitor.widget;
 
 import android.appwidget.AppWidgetManager;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,6 +33,7 @@ import com.example.wojciech.iotmonitor.model.thingspeak.Credentials;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class WidgetConfigureActivity extends AppCompatActivity {
@@ -71,67 +74,60 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     }
 
     private void configure(int appWidgetId) {
-        Log.d(TAG, "configure: with appwid: " + appWidgetId);
         WidgetSettingsManager.getInstance(this);
-//        CredentialsRepository.getInstance(this);
-        ChannelSettings channelSettings = widgetSettingsManager.getChannelSettings(appWidgetId);
-        if (channelSettings == null) {
-            //todo return?
-            channelSettings = new ChannelSettings();
-        }
-//        bnd.setChannelSettings(channelSettings);
-        List<Credentials> value = credentialsRepository.getCredentials().getValue();
-
-        final List<String> names;
-        if (value == null) {
-            return;
-        }
-        names = value.stream()
-                .map(Credentials::getName)
-                .collect(Collectors.toList());
-        ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.widget_spinner_item, names);
-        bnd.spnChannels.setAdapter(namesAdapter);
-        if (channelSettings.getCredentials() != null) {
-            bnd.spnChannels.setSelection(names.indexOf(channelSettings.getCredentials().getName()));
-        }
-        bnd.spnChannels.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        ChannelSettings channelSettings = Optional.ofNullable(widgetSettingsManager.getChannelSettings(appWidgetId)).orElse(new ChannelSettings());
+        credentialsRepository.getCredentials().observe(this, new Observer<List<Credentials>>() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                channelSettingsTmp.setCredentials(value.stream().filter(c -> c.getName().equals(namesAdapter.getItem(position))).findFirst().get());
+            public void onChanged(@Nullable List<Credentials> credentials) {
+
+                if (credentials == null) {
+                    return;
+                }
+                final List<String> names = credentials.stream()
+                        .map(Credentials::getName)
+                        .collect(Collectors.toList());
+                ArrayAdapter<String> namesAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.widget_spinner_item, names);
+                bnd.spnChannels.setAdapter(namesAdapter);
+                if (channelSettings.getCredentials() != null) {
+                    bnd.spnChannels.setSelection(names.indexOf(channelSettings.getCredentials().getName()));
+                }
+                bnd.spnChannels.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        channelSettingsTmp.setCredentials(credentials.stream().filter(c -> c.getName().equals(namesAdapter.getItem(position))).findFirst().get());
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+
+                });
+                ArrayAdapter<Integer> fieldsAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.widget_spinner_item, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8));
+
+                bnd.spnFields.setAdapter(fieldsAdapter);
+
+                bnd.spnFields.setSelection(channelSettingsTmp.getFieldNr() - 1);
+                bnd.spnFields.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        channelSettingsTmp.setFieldNr(position + 1);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
 
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-
-        });
-
-        ArrayAdapter<Integer> fieldsAdapter = new ArrayAdapter<>(WidgetConfigureActivity.this, R.layout.widget_spinner_item, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8));
-
-        bnd.spnChannels.setAdapter(fieldsAdapter);
-
-        bnd.spnChannels.setSelection(channelSettingsTmp.getFieldNr() - 1);
-        bnd.spnChannels.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                channelSettingsTmp.setFieldNr(position + 1);
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
         });
 
         bnd.btnSetColor.setBackground(new ColorDrawable(android.graphics.Color.parseColor(channelSettingsTmp.getBgColor())));
-
-//        bnd.wConfMinValue.setText(String.format(Locale.ENGLISH, "%.1f", channelSettings.getMinValue()));
-//        bnd.wConfMaxValue.setText(String.format(Locale.ENGLISH, "%.1f", channelSettings.getMaxValue()));
-//        bnd.wConfMinValue.addTextChangedListener(textWatcherMin);
-//        bnd.wConfMaxValue.addTextChangedListener(textWatcherMax);
 
         bnd.tvRefreshTime.setText(String.format("%s min", channelSettings.getRefreshTime()));
         bnd.sbRefreshTime.setProgress(channelSettings.getRefreshTime());
