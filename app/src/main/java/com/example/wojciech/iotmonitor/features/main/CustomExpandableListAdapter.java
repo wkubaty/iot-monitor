@@ -21,12 +21,12 @@ import java.util.List;
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private List<String> expandableListTitle;
-    private HashMap<String, List<FieldValueListItem>> expandableListDetail;
+    private List<ChannelStatus> expandableListTitle;
+    private HashMap<ChannelStatus, List<FieldValueListItem>> expandableListDetail;
     private List<Credentials> credentials;
 
-    public CustomExpandableListAdapter(Context context, List<String> expandableListTitle,
-                                       HashMap<String, List<FieldValueListItem>> expandableListDetail, List<Credentials> credentials) {
+    public CustomExpandableListAdapter(Context context, List<ChannelStatus> expandableListTitle,
+                                       HashMap<ChannelStatus, List<FieldValueListItem>> expandableListDetail, List<Credentials> credentials) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
@@ -81,12 +81,13 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int listPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        String listTitle = (String) getGroup(listPosition);
+        ChannelStatus channelStatus = (ChannelStatus) getGroup(listPosition);
         LayoutInflater layoutInflater = (LayoutInflater) this.context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         MainExpandableGroupBinding bnd = DataBindingUtil.inflate(layoutInflater, R.layout.main_expandable_group, null, false);
         bnd.tvListTitle.setTypeface(null, Typeface.BOLD);
-        bnd.tvListTitle.setText(listTitle);
+        bnd.tvListTitle.setText(channelStatus.getName());
+        bnd.tvLastUpdate.setText(channelStatus.getLastUpdate());
         bnd.ivChartIcon.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChannelActivity.class);
             intent.putExtra("credentials", credentials.get(listPosition));

@@ -29,7 +29,7 @@ public class MainViewModel extends AndroidViewModel {
 
     private MutableLiveData<Boolean> isChannelListEmpty = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
-    private MutableLiveData<HashMap<String, List<FieldValueListItem>>> expandableListDetailLiveData;
+    private MutableLiveData<HashMap<ChannelStatus, List<FieldValueListItem>>> expandableListDetailLiveData;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -37,11 +37,11 @@ public class MainViewModel extends AndroidViewModel {
         fieldSettingsRepository = new FieldSettingsRepository(getApplication());
         credentialsLive = credentialsRepository.getCredentials();
         fieldSettingsLive = fieldSettingsRepository.getFieldSettings();
-        expandableListDetailLiveData = new MutableLiveData<>();
+        expandableListDetailLiveData = new MutableLiveData<HashMap<ChannelStatus, List<FieldValueListItem>>>();
     }
 
     public void init() {
-        expandableListDetailLiveData.postValue(new HashMap<>());
+        expandableListDetailLiveData.postValue(new HashMap<ChannelStatus, List<FieldValueListItem>>());
         isLoading.postValue(true);
     }
 
@@ -84,15 +84,15 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void addNewChannel(ThingspeakResponse thingspeakResponse) {
-        List<FieldValueListItem> s = new ArrayList<>();
+        List<FieldValueListItem> fieldValueListItems = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             String field = thingspeakResponse.getChannel().getField(i + 1);
             String value = thingspeakResponse.getFeeds()[0].getField(i + 1);
-            s.add(new FieldValueListItem(field, value));
+            fieldValueListItems.add(new FieldValueListItem(field, value));
         }
-        HashMap<String, List<FieldValueListItem>> value = expandableListDetailLiveData.getValue();
+        HashMap<ChannelStatus, List<FieldValueListItem>> value = expandableListDetailLiveData.getValue();
         if (value != null) {
-            value.put(thingspeakResponse.getChannel().getName(), s);
+            value.put(new ChannelStatus(thingspeakResponse.getChannel().getName(), thingspeakResponse.getFeeds()[0].getCreatedAt()), fieldValueListItems);
             expandableListDetailLiveData.postValue(value);
         }
         if (expandableListDetailLiveData.getValue() != null
@@ -102,7 +102,7 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    public LiveData<HashMap<String, List<FieldValueListItem>>> getExpandableListDetailLiveData() {
+    public LiveData<HashMap<ChannelStatus, List<FieldValueListItem>>> getExpandableListDetailLiveData() {
         return expandableListDetailLiveData;
     }
 

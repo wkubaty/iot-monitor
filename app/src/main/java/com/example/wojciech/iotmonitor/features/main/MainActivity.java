@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
     private MainViewModel viewModel;
     private List<Credentials> credentials = new ArrayList<>();
     private ActivityMainBinding bnd;
-    private ArrayList<String> expandableListTitle;
+    private ArrayList<ChannelStatus> expandableChannelList;
     private CustomExpandableListAdapter expandableListAdapter;
 
     @Override
@@ -60,10 +60,10 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
 
         viewModel.getExpandableListDetailLiveData().observe(this, stringListHashMap -> {
             if (stringListHashMap != null) {
-                expandableListTitle = new ArrayList<>(stringListHashMap.keySet());
-                expandableListTitle.sort(String::compareTo);
+                expandableChannelList = new ArrayList<>(stringListHashMap.keySet());
+                expandableChannelList.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
             }
-            expandableListAdapter = new CustomExpandableListAdapter(MainActivity.this, expandableListTitle, stringListHashMap, credentials);
+            expandableListAdapter = new CustomExpandableListAdapter(MainActivity.this, expandableChannelList, stringListHashMap, credentials);
             bnd.expandableListView.setAdapter(expandableListAdapter);
             bnd.expandableListView.setOnGroupExpandListener(groupPosition -> {
             });

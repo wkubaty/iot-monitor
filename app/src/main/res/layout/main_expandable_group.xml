@@ -12,7 +12,6 @@
             android:id="@+id/tv_list_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:gravity="start"
             android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
@@ -22,6 +21,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Channel" />
+
+        <TextView
+            android:id="@+id/tv_last_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_list_title"
+            tools:text="Last update" />
 
         <ImageView
             android:id="@+id/iv_chart_icon"

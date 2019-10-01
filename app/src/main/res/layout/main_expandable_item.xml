@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,10 +13,12 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
+            android:layout_marginStart="@dimen/margin"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Field" />
 
         <TextView
             android:id="@+id/tv_expanded_list_item_value"
@@ -26,7 +28,7 @@
             android:paddingStart="?android:attr/expandableListPreferredChildPaddingLeft"
             android:paddingTop="10dp"
             android:paddingEnd="@dimen/padding"
-            android:paddingBottom="10dp"
+            android:layout_marginBottom="@dimen/double_padding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
