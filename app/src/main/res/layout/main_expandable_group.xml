@@ -6,30 +6,8 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tv_list_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="start"
-            android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColor="@android:color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Channel" />
-
-        <TextView
-            android:id="@+id/tv_last_update"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_list_title"
-            tools:text="Last update" />
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/margin">
 
         <ImageView
             android:id="@+id/iv_chart_icon"
@@ -40,6 +18,44 @@
             android:src="@drawable/ic_show_chart_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_list_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="start"
+            android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
+            android:paddingTop="4dp"
+            android:paddingBottom="@dimen/padding"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Channel" />
+
+        <TextView
+            android:id="@+id/tv_last_entry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
+            android:text="@string/last_entry"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_list_title" />
+
+        <TextView
+            android:id="@+id/tv_last_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/padding"
+            android:paddingEnd="@dimen/padding"
+            android:layout_marginStart="@dimen/margin"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/tv_last_entry"
+            app:layout_constraintTop_toBottomOf="@+id/tv_list_title"
+            tools:text="Last update"
+            tools:background="@color/last_update_recent"/>
 
     </android.support.constraint.ConstraintLayout>
 </layout>

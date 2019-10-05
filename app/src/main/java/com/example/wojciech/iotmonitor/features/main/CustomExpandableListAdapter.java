@@ -20,10 +20,12 @@ import java.util.List;
 
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
 
+    private static final String TAG = CustomExpandableListAdapter.class.getSimpleName();
     private Context context;
     private List<ChannelStatus> expandableListTitle;
     private HashMap<ChannelStatus, List<FieldValueListItem>> expandableListDetail;
     private List<Credentials> credentials;
+
 
     public CustomExpandableListAdapter(Context context, List<ChannelStatus> expandableListTitle,
                                        HashMap<ChannelStatus, List<FieldValueListItem>> expandableListDetail, List<Credentials> credentials) {
@@ -87,13 +89,28 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         MainExpandableGroupBinding bnd = DataBindingUtil.inflate(layoutInflater, R.layout.main_expandable_group, null, false);
         bnd.tvListTitle.setTypeface(null, Typeface.BOLD);
         bnd.tvListTitle.setText(channelStatus.getName());
-        bnd.tvLastUpdate.setText(channelStatus.getLastUpdate());
+        bnd.tvLastUpdate.setText(channelStatus.getLastUpdateString());
+        bnd.tvLastUpdate.setBackgroundResource(getColor(channelStatus));
         bnd.ivChartIcon.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChannelActivity.class);
             intent.putExtra("credentials", credentials.get(listPosition));
             context.startActivity(intent);
         });
         return bnd.getRoot();
+    }
+
+    private int getColor(ChannelStatus channelStatus) {
+        switch (channelStatus.getType()) {
+            case RECENT:
+//                return R.color.last_update_recent;
+                return R.drawable.time_label_recent;
+
+            case WARNING:
+                return R.drawable.time_label_warning;
+            case DANGER:
+            default:
+                return R.drawable.time_label_danger;
+        }
     }
 
     @Override
@@ -105,4 +122,6 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int listPosition, int expandedListPosition) {
         return true;
     }
+
+
 }

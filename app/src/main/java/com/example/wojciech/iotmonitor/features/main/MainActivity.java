@@ -59,16 +59,14 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
         });
 
         viewModel.getExpandableListDetailLiveData().observe(this, stringListHashMap -> {
-            if (stringListHashMap != null) {
-                expandableChannelList = new ArrayList<>(stringListHashMap.keySet());
-                expandableChannelList.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
-            }
+            expandableChannelList = new ArrayList<>(stringListHashMap.keySet());
+            expandableChannelList.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
             expandableListAdapter = new CustomExpandableListAdapter(MainActivity.this, expandableChannelList, stringListHashMap, credentials);
             bnd.expandableListView.setAdapter(expandableListAdapter);
             bnd.expandableListView.setOnGroupExpandListener(groupPosition -> {
+
             });
             bnd.expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
-
 
                 int channelId = credentials.get(groupPosition).getId();
                 FieldSettings settings = viewModel.getChannelFieldSettingsByChannelIdAndField(channelId, childPosition + 1);
@@ -147,5 +145,11 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
         AlertDialog alert = builder.create();
         alert.show();
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewModel.clear();
     }
 }

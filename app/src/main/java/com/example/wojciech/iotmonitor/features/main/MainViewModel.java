@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -16,20 +17,39 @@ import com.example.wojciech.iotmonitor.model.thingspeak.ThingspeakResponse;
 import com.example.wojciech.iotmonitor.net.RequestManager;
 import com.example.wojciech.iotmonitor.net.VolleyCallback;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MainViewModel extends AndroidViewModel {
     private static final String TAG = MainViewModel.class.getSimpleName();
+    private static final int INTERVAL = 60000; // in ms
+    private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ssX";
     private LiveData<List<Credentials>> credentialsLive;
     private LiveData<List<FieldSettings>> fieldSettingsLive;
     private CredentialsRepository credentialsRepository;
     private FieldSettingsRepository fieldSettingsRepository;
-
     private MutableLiveData<Boolean> isChannelListEmpty = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<HashMap<ChannelStatus, List<FieldValueListItem>>> expandableListDetailLiveData;
+    private Handler handler;
+    private Runnable statusChecker = new Runnable() {
+        @Override
+        public void run() {
+            HashMap<ChannelStatus, List<FieldValueListItem>> expandableListDetailLiveDataValue = expandableListDetailLiveData.getValue();
+            HashMap<ChannelStatus, List<FieldValueListItem>> expandableListDetailLiveDataValue2 = new HashMap<>();
+            if (expandableListDetailLiveDataValue != null) {
+                expandableListDetailLiveDataValue.forEach((k, value) -> k.setOrUpdate());
+                expandableListDetailLiveData.postValue(expandableListDetailLiveDataValue);
+                handler.postDelayed(statusChecker, INTERVAL);
+            }
+
+        }
+    };
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -43,6 +63,11 @@ public class MainViewModel extends AndroidViewModel {
     public void init() {
         expandableListDetailLiveData.postValue(new HashMap<ChannelStatus, List<FieldValueListItem>>());
         isLoading.postValue(true);
+        handler = new Handler();
+    }
+
+    public void clear() {
+        handler.removeCallbacks(statusChecker);
     }
 
     public LiveData<List<Credentials>> getCredentialsLive() {
@@ -92,8 +117,19 @@ public class MainViewModel extends AndroidViewModel {
         }
         HashMap<ChannelStatus, List<FieldValueListItem>> value = expandableListDetailLiveData.getValue();
         if (value != null) {
-            value.put(new ChannelStatus(thingspeakResponse.getChannel().getName(), thingspeakResponse.getFeeds()[0].getCreatedAt()), fieldValueListItems);
-            expandableListDetailLiveData.postValue(value);
+
+            SimpleDateFormat sdf = new SimpleDateFormat(PATTERN, Locale.ENGLISH);
+            try {
+                String channelName = thingspeakResponse.getChannel().getName();
+                Date lastUpdate = sdf.parse(thingspeakResponse.getFeeds()[0].getCreatedAt());
+                value.put(new ChannelStatus(channelName, lastUpdate), fieldValueListItems);
+                expandableListDetailLiveData.postValue(value);
+                handler.removeCallbacks(statusChecker);
+                statusChecker.run();
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         if (expandableListDetailLiveData.getValue() != null
                 && credentialsLive.getValue() != null
@@ -109,7 +145,6 @@ public class MainViewModel extends AndroidViewModel {
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
     }
-
 
     public List<FieldSettings> getChannelFieldSettingsByChannelId(int channelId) {
         return fieldSettingsRepository.getChannelFieldSettingsByChannelId(channelId);

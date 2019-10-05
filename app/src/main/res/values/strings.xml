@@ -39,4 +39,5 @@
     <string name="week">WEEK</string>
     <string name="month">MONTH</string>
     <string name="triggers">Triggers</string>
+    <string name="last_entry">Last entry:</string>
 </resources>

@@ -55,12 +55,10 @@ public class FieldSettings implements Parcelable, Cloneable {
     }
 
     public boolean isMaxTrigger() {
-        Log.d(TAG, "isMaxTrigger: ");
         return maxTrigger;
     }
 
     public void setMaxTrigger(boolean maxTrigger) {
-        Log.d(TAG, "setMaxTrigger: ");
         this.maxTrigger = maxTrigger;
     }
 

@@ -5,4 +5,8 @@
     <color name="colorAccent">#FF5722</color>
     <color name="gray">#DDDDDD</color>
     <color name="blue">#1275C4</color>
+    
+    <color name="last_update_recent">#009E13</color>
+    <color name="last_update_warning">#FFC107</color>
+    <color name="last_update_danger">#FF2D1F</color>
 </resources>
