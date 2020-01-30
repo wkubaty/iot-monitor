@@ -5,6 +5,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -22,6 +24,7 @@ public class FieldSettingsDialogFragment extends DialogFragment {
 
     private static final String TAG = FieldSettingsDialogFragment.class.getSimpleName();
     private static final String SETTINGS = "settings";
+    public static final String DIALOGBUTTON = "onDialogButtonClick";
     private OnDialogButtonClick onDialogButtonClick;
 
     public static FieldSettingsDialogFragment newInstance(FieldSettings settings) {
@@ -32,11 +35,14 @@ public class FieldSettingsDialogFragment extends DialogFragment {
         return frag;
     }
 
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         FieldSettings fieldSettings = getArguments().getParcelable(SETTINGS);
+        if (getArguments().getParcelable("onDialogButtonClick") != null) {
+            onDialogButtonClick = getArguments().getParcelable(DIALOGBUTTON);
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         FieldSettingsDialogViewModel fieldSettingsDialogViewModel = ViewModelProviders.of(this).get(FieldSettingsDialogViewModel.class);
         DialogFieldSettingsBinding dialogBnd = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.dialog_field_settings, null, false);
@@ -56,10 +62,10 @@ public class FieldSettingsDialogFragment extends DialogFragment {
         dialogBnd.setViewModel(fieldSettingsDialogViewModel);
         builder.setView(dialogBnd.getRoot());
 
-        builder.setPositiveButton("Set", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.field_settings_positive_button), (dialog, which) -> {
 
         });
-        builder.setNegativeButton("Cancel", ((dialog, which) -> {
+        builder.setNegativeButton(getString(R.string.field_settings_negative_button), ((dialog, which) -> {
             onDialogButtonClick.onNegativeClicked();
             builder.setCancelable(true);
 
@@ -71,19 +77,26 @@ public class FieldSettingsDialogFragment extends DialogFragment {
 
             @Override
             public void onShow(DialogInterface dialogInterface) {
-
-                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
+                Button confirmSettingsButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                confirmSettingsButton.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
-                        // TODO Do something
                         if (onDialogButtonClick != null) {
-                            if (ifMinValueIsLessOrEqualMaxValue(Float.valueOf(dialogBnd.wConfMinValue.getText().toString()), Float.valueOf(dialogBnd.wConfMaxValue.getText().toString()))) {
+                            if (dialogBnd.wConfMinTrigger.isChecked() && dialogBnd.wConfMaxTrigger.isChecked()) {
+                                Float minValue = Float.valueOf(dialogBnd.wConfMinValue.getText().toString());
+                                Float maxValue = Float.valueOf(dialogBnd.wConfMaxValue.getText().toString());
+                                if (ifMinValueIsLessOrEqualMaxValue(minValue, maxValue)) {
+                                    onDialogButtonClick.onPositiveClicked(fieldSettingsDialogViewModel.getFieldSettingsTmpLive().getValue());
+                                    alertDialog.dismiss();
+                                } else {
+                                    Toast.makeText(getContext().getApplicationContext(), getString(R.string.field_settings_min_max_warning), Toast.LENGTH_SHORT).show();
+                                }
+                            } else if (dialogBnd.wConfMinTrigger.isChecked() || dialogBnd.wConfMaxTrigger.isChecked()) {
                                 onDialogButtonClick.onPositiveClicked(fieldSettingsDialogViewModel.getFieldSettingsTmpLive().getValue());
                                 alertDialog.dismiss();
                             } else {
-                                Toast.makeText(getContext().getApplicationContext(), "Max value can't be lower than min value.", Toast.LENGTH_SHORT).show();
+                                alertDialog.dismiss();
                             }
 
                         }
@@ -105,12 +118,20 @@ public class FieldSettingsDialogFragment extends DialogFragment {
 
     public void setOnDialogButtonClick(OnDialogButtonClick onDialogButtonClick) {
         this.onDialogButtonClick = onDialogButtonClick;
+        if (getArguments() != null) {
+            getArguments().putParcelable(DIALOGBUTTON, onDialogButtonClick);
+        }
     }
 
-    public interface OnDialogButtonClick {
+    public interface OnDialogButtonClick extends Parcelable {
         void onPositiveClicked(FieldSettings fieldSettingsTmp);
 
         void onNegativeClicked();
 
+        @Override
+        int describeContents();
+
+        @Override
+        void writeToParcel(Parcel dest, int flags);
     }
 }

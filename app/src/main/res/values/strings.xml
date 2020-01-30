@@ -40,4 +40,8 @@
     <string name="month">MONTH</string>
     <string name="triggers">Triggers</string>
     <string name="last_entry">Last entry:</string>
+    <string name="field_settings_min_max_warning">Max value can\'t be lower than min value.</string>
+    <string name="field_settings_positive_button">Set</string>
+    <string name="field_settings_negative_button">Cancel</string>
+    <string name="confirm_field_deleting">Are you sure you want to delete this field?</string>
 </resources>

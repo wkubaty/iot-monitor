@@ -5,9 +5,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,17 +73,26 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
                 int channelId = credentials.get(groupPosition).getId();
                 FieldSettings settings = viewModel.getChannelFieldSettingsByChannelIdAndField(channelId, childPosition + 1);
                 FieldSettingsDialogFragment fieldSettingsDialogFragment = FieldSettingsDialogFragment.newInstance(settings);
-
                 fieldSettingsDialogFragment.setOnDialogButtonClick(new FieldSettingsDialogFragment.OnDialogButtonClick() {
                     @Override
                     public void onPositiveClicked(FieldSettings fieldSettingsTmp) {
                         viewModel.updateFieldSetting(fieldSettingsTmp);
                     }
-
                     @Override
                     public void onNegativeClicked() {
 
                     }
+
+                    @Override
+                    public int describeContents() {
+                        return 0;
+                    }
+
+                    @Override
+                    public void writeToParcel(Parcel dest, int flags) {
+                    }
+
+
                 });
                 fieldSettingsDialogFragment.show(getSupportFragmentManager(), "triggers_dialog");
                 return false;
@@ -123,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
 
     private void deleteChannel(int id) {
         viewModel.deleteByChannelId(id);
-
     }
 
     @Override
@@ -137,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements ChannelsAdapter.A
     public boolean onChannelLongClick(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setCancelable(true)
-                .setMessage("Are you sure you want to delete this field?")
+                .setMessage(getString(R.string.confirm_field_deleting))
                 .setPositiveButton(R.string.label_yes, (dialog, which) -> {
                     deleteChannel(credentials.get(position).getId());
                     dialog.cancel();
