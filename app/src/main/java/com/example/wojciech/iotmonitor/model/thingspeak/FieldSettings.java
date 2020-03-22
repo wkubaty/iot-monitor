@@ -5,7 +5,6 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 @Entity(tableName = "field_settings")
 public class FieldSettings implements Parcelable, Cloneable {
@@ -144,6 +143,7 @@ public class FieldSettings implements Parcelable, Cloneable {
             return new FieldSettings[size];
         }
     };
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
